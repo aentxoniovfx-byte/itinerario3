@@ -1,57 +1,30 @@
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCPPgAf7oDT7xiqj0PoK_25_kz6-ERmwIk",
-  authDomain: "itinerario3-40c79.firebaseapp.com",
-  projectId: "itinerario3-40c79",
-  storageBucket: "itinerario3-40c79.appspot.com",
-  messagingSenderId: "133043441925",
-  appId: "1:133043441925:web:9f25c692691effa1faa76c"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-let data = [];
-let timeout;
+const RATE = 13;
+let data = JSON.parse(localStorage.getItem("trip_app")) || [];
 
 /* SAVE */
-function autoSave(){
-  clearTimeout(timeout);
-  timeout = setTimeout(save, 500);
-}
-
 function save(){
-  db.collection("itinerarios").doc("main").set({ data });
+  localStorage.setItem("trip_app", JSON.stringify(data));
 }
 
-/* SYNC */
-db.collection("itinerarios").doc("main")
-.onSnapshot(doc => {
-  if(doc.exists){
-    data = doc.data().data || [];
-    render();
-  }
-});
-
-/* ACTIONS */
+/* ADD DAY */
 function addDay(){
   data.push({ date:"", activities:[] });
-  autoSave();
+  save();
   render();
 }
 
+/* ADD ACTIVITY */
 function addActivity(d){
   data[d].activities.push({ name:"", expenses:[] });
-  autoSave();
+  save();
   render();
 }
 
+/* ADD EXPENSE */
 function addExpense(d,a){
   data[d].activities[a].expenses.push({ name:"", value:0 });
-  autoSave();
+  save();
   render();
 }
 
@@ -61,9 +34,13 @@ function calc(day){
     sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0),0);
 }
 
-/* DATE FORMAT (FIX IMPORTANTE) */
+/* DATE FORMAT */
 function formatDate(date){
-  if(!date) return `<div class="fechaTexto"><div>Sin fecha</div></div>`;
+  if(!date) return `
+    <div class="fechaTexto">
+      <div>Sin fecha</div>
+    </div>
+  `;
 
   const d = new Date(date);
   const days=['dom','lun','mar','mié','jue','vie','sáb'];
@@ -78,23 +55,21 @@ function formatDate(date){
   `;
 }
 
-/* RENDER (NO ROMPE UI) */
+/* RENDER */
 function render(){
   const app = document.getElementById("app");
   app.innerHTML = "";
 
-  let total = 0;
-
   data.forEach((day,di)=>{
-    const dayTotal = calc(day);
-    total += dayTotal;
+
+    const total = calc(day);
 
     app.innerHTML += `
       <tr>
 
         <td class="dia">
           <input type="date" value="${day.date || ""}"
-          onchange="data[${di}].date=this.value; autoSave()">
+          onchange="data[${di}].date=this.value; save(); render()">
 
           ${formatDate(day.date)}
         </td>
@@ -103,14 +78,15 @@ function render(){
           <button onclick="addActivity(${di})">+ Actividad</button>
 
           ${day.activities.map((a,ai)=>`
+
             <div class="block">
 
               <div class="header">
                 <input placeholder="Actividad" value="${a.name || ""}"
-                oninput="data[${di}].activities[${ai}].name=this.value; autoSave()">
+                oninput="data[${di}].activities[${ai}].name=this.value; save()">
 
                 <button class="del"
-                onclick="data[${di}].activities.splice(${ai},1); autoSave(); render()">✕</button>
+                onclick="data[${di}].activities.splice(${ai},1); save(); render()">✕</button>
               </div>
 
               ${a.expenses.map((e,ei)=>`
@@ -118,16 +94,16 @@ function render(){
 
                   <div class="exp-name">
                     <input placeholder="gasto" value="${e.name || ""}"
-                    oninput="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; autoSave()">
+                    oninput="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()">
                   </div>
 
                   <div class="exp-value">
                     <input type="number" value="${e.value || 0}"
-                    oninput="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; autoSave()">
+                    oninput="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()">
                   </div>
 
                   <button class="del"
-                  onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); autoSave(); render()">✕</button>
+                  onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()">✕</button>
 
                 </div>
               `).join("")}
@@ -135,19 +111,22 @@ function render(){
               <button onclick="addExpense(${di},${ai})">+ gasto</button>
 
             </div>
+
           `).join("")}
         </td>
 
-        <td>CAD $${dayTotal.toFixed(2)}</td>
-        <td>MXN $${(dayTotal*13).toFixed(2)}</td>
+        <td>CAD $${total.toFixed(2)}</td>
+        <td>MXN $${(total*RATE).toFixed(2)}</td>
 
       </tr>
     `;
   });
-
-  document.getElementById("totalGlobal").innerText =
-    `Total: CAD $${total.toFixed(2)} | MXN $${(total*13).toFixed(2)}`;
 }
 
 render();
+
+/* PWA */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
 </script>
