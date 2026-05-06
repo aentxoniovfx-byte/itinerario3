@@ -40,6 +40,36 @@ th, td {
   border: 1px solid rgba(76,201,240,0.25);
 }
 
+/* CALENDARIO FIX */
+.fechaTexto {
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    rgba(76,201,240,0.25),
+    rgba(247,37,133,0.25)
+  );
+  border: 1px solid rgba(76,201,240,0.5);
+  text-align: center;
+}
+
+.fechaTexto div:nth-child(1){
+  font-size: 12px;
+  color: #4cc9f0;
+  text-transform: uppercase;
+}
+
+.fechaTexto div:nth-child(2){
+  font-size: 26px;
+  font-weight: 700;
+  color: #f72585;
+}
+
+.fechaTexto div:nth-child(3){
+  font-size: 12px;
+  opacity: 0.8;
+}
+
 .dia {
   text-align: center;
 }
@@ -122,12 +152,11 @@ input {
 <tbody id="app"></tbody>
 </table>
 
-<!-- Firebase (compat) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyCPPgAf7oDT7xiqj0PoK_25_kz6-ERmwIk",
   authDomain: "itinerario3-40c79.firebaseapp.com",
@@ -140,22 +169,21 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* 📦 DATA */
 let data = [];
 let timeout;
 
-/* 💾 AUTO SAVE */
+/* AUTO SAVE */
 function autoSave(){
   clearTimeout(timeout);
   timeout = setTimeout(save, 500);
 }
 
-/* ☁️ SAVE FIREBASE */
+/* SAVE FIREBASE */
 function save(){
   db.collection("itinerarios").doc("main").set({ data });
 }
 
-/* 🔄 REALTIME SYNC */
+/* REALTIME SYNC */
 db.collection("itinerarios").doc("main")
 .onSnapshot(doc => {
   if(doc.exists){
@@ -164,34 +192,48 @@ db.collection("itinerarios").doc("main")
   }
 });
 
-/* ➕ DAY */
+/* ADD */
 function addDay(){
   data.push({ date:"", activities:[] });
   autoSave();
   render();
 }
 
-/* ➕ ACTIVITY */
 function addActivity(d){
   data[d].activities.push({ name:"", expenses:[] });
   autoSave();
   render();
 }
 
-/* ➕ EXPENSE */
 function addExpense(d,a){
   data[d].activities[a].expenses.push({ name:"", value:0 });
   autoSave();
   render();
 }
 
-/* 💰 CALC */
+/* CALC */
 function calc(day){
   return day.activities.reduce((sum,a)=>
     sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0),0);
 }
 
-/* 🎨 RENDER */
+/* DATE */
+function formatDate(date){
+  if(!date) return "";
+  const d = new Date(date);
+  const days=['dom','lun','mar','mié','jue','vie','sáb'];
+  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  return `
+    <div class="fechaTexto">
+      <div>${months[d.getMonth()]}</div>
+      <div>${d.getDate()}</div>
+      <div>${days[d.getDay()]}</div>
+    </div>
+  `;
+}
+
+/* RENDER */
 function render(){
   const app = document.getElementById("app");
   app.innerHTML = "";
@@ -208,6 +250,7 @@ function render(){
         <td class="dia">
           <input type="date" value="${day.date}"
           onchange="data[${di}].date=this.value; autoSave()">
+          ${formatDate(day.date)}
         </td>
 
         <td>
