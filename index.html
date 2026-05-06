@@ -33,16 +33,7 @@ table {
   margin-top: 15px;
 }
 
-th {
-  text-align: center;
-  font-weight: 800;
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid #2d333b;
-}
-
-td {
+th, td {
   padding: 14px;
   border-radius: 14px;
   background: #111827;
@@ -59,17 +50,6 @@ td {
   border: none;
   color: white;
   text-align: center;
-}
-
-.fechaTexto {
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: 12px;
-  background: linear-gradient(135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
-  );
-  border: 1px solid rgba(76,201,240,0.25);
 }
 
 .block {
@@ -121,19 +101,14 @@ input {
   color: #9ca3af;
   cursor: pointer;
 }
-
-.del:hover {
-  color: white;
-}
 </style>
 </head>
 
 <body>
 
-<h2 id="totalGlobal">Total: $0</h2>
+<h2 id="totalGlobal">Total: CAD $0</h2>
 
 <button onclick="addDay()">➕ Día</button>
-<button onclick="exportPDF()">📄 PDF</button>
 
 <table>
 <thead>
@@ -147,107 +122,92 @@ input {
 <tbody id="app"></tbody>
 </table>
 
-<!-- Firebase -->
+<!-- Firebase (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-<!-- PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <script>
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
+  apiKey: "AIzaSyCPPgAf7oDT7xiqj0PoK_25_kz6-ERmwIk",
+  authDomain: "itinerario3-40c79.firebaseapp.com",
+  projectId: "itinerario3-40c79",
+  storageBucket: "itinerario3-40c79.appspot.com",
+  messagingSenderId: "133043441925",
+  appId: "1:133043441925:web:9f25c692691effa1faa76c"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+/* 📦 DATA */
 let data = [];
 let timeout;
 
-/* AUTOSAVE */
+/* 💾 AUTO SAVE */
 function autoSave(){
   clearTimeout(timeout);
   timeout = setTimeout(save, 500);
 }
 
-/* SAVE */
-async function save(){
-  await db.collection("itinerarios").doc("main").set({ data });
+/* ☁️ SAVE FIREBASE */
+function save(){
+  db.collection("itinerarios").doc("main").set({ data });
 }
 
-/* SYNC */
+/* 🔄 REALTIME SYNC */
 db.collection("itinerarios").doc("main")
 .onSnapshot(doc => {
   if(doc.exists){
     data = doc.data().data || [];
     render();
-  } else {
-    data = [];
-    render();
   }
 });
 
-/* ADD */
+/* ➕ DAY */
 function addDay(){
   data.push({ date:"", activities:[] });
   autoSave();
   render();
 }
 
+/* ➕ ACTIVITY */
 function addActivity(d){
   data[d].activities.push({ name:"", expenses:[] });
   autoSave();
   render();
 }
 
+/* ➕ EXPENSE */
 function addExpense(d,a){
   data[d].activities[a].expenses.push({ name:"", value:0 });
   autoSave();
   render();
 }
 
-/* CALC */
+/* 💰 CALC */
 function calc(day){
   return day.activities.reduce((sum,a)=>
     sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0),0);
 }
 
-/* DATE */
-function formatDate(date){
-  if(!date) return "";
-  const d = new Date(date);
-  const days=['dom','lun','mar','mié','jue','vie','sáb'];
-  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-
-  return `
-    <div class="fechaTexto">
-      <div>${months[d.getMonth()]}</div>
-      <div>${d.getDate()}</div>
-      <div>${days[d.getDay()]}</div>
-    </div>
-  `;
-}
-
-/* RENDER */
+/* 🎨 RENDER */
 function render(){
   const app = document.getElementById("app");
   app.innerHTML = "";
 
-  let totalGlobal = 0;
+  let total = 0;
 
   data.forEach((day,di)=>{
-    const total = calc(day);
-    totalGlobal += total;
+    const dayTotal = calc(day);
+    total += dayTotal;
 
     app.innerHTML += `
       <tr>
+
         <td class="dia">
           <input type="date" value="${day.date}"
-          onchange="data[${di}].date=this.value; autoSave(); render()">
-          ${formatDate(day.date)}
+          onchange="data[${di}].date=this.value; autoSave()">
         </td>
 
         <td>
@@ -289,20 +249,18 @@ function render(){
           `).join("")}
         </td>
 
-        <td>CAD $${total.toFixed(2)}</td>
-        <td>MXN $${(total*13).toFixed(2)}</td>
+        <td>CAD $${dayTotal.toFixed(2)}</td>
+        <td>MXN $${(dayTotal*13).toFixed(2)}</td>
+
       </tr>
     `;
   });
 
   document.getElementById("totalGlobal").innerText =
-    `Total: CAD $${totalGlobal.toFixed(2)} | MXN $${(totalGlobal*13).toFixed(2)}`;
+    `Total: CAD $${total.toFixed(2)} | MXN $${(total*13).toFixed(2)}`;
 }
 
-/* PDF */
-function exportPDF(){
-  html2pdf().from(document.body).save("itinerario.pdf");
-}
+render();
 </script>
 
 </body>
