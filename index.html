@@ -1,3 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itinerario Blue Pink</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1115">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0f1115;
+  color: #e6e6e6;
+  padding: 20px;
+}
+
+button {
+  background: #1f2937;
+  color: white;
+  border: 1px solid #2d3748;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px;
+  margin-top: 15px;
+}
+
+th {
+  text-align: center;
+  font-weight: 800;
+  padding: 14px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid #2d333b;
+}
+
+td {
+  padding: 14px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(76,201,240,0.25);
+}
+
+.dia {
+  text-align: center;
+}
+
+.dia input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  text-align: center;
+  color-scheme: dark;
+}
+
+.dia input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.fechaTexto {
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    rgba(76,201,240,0.12),
+    rgba(247,37,133,0.10)
+  );
+  border: 1px solid rgba(76,201,240,0.25);
+}
+
+.fechaTexto div:nth-child(1){
+  font-size:13px;
+  color: rgba(76,201,240,0.85);
+}
+
+.fechaTexto div:nth-child(2){
+  font-size:28px;
+  font-weight:700;
+  color: rgba(247,37,133,0.55);
+}
+
+.fechaTexto div:nth-child(3){
+  font-size:13px;
+  color: rgba(247,37,133,0.75);
+}
+
+.block {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(76,201,240,0.2);
+}
+
+.header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.exp-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.exp-name {
+  flex: 1;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(76,201,240,0.08);
+  border: 1px solid rgba(76,201,240,0.25);
+}
+
+.exp-value {
+  width: 110px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(247,37,133,0.08);
+  border: 1px solid rgba(247,37,133,0.25);
+}
+
+input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+.del {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<button onclick="addDay()">➕ Día</button>
+
+<table>
+<thead>
+<tr>
+<th>Día</th>
+<th>Actividades</th>
+<th>CAD</th>
+<th>MXN</th>
+</tr>
+</thead>
+
+<tbody id="app"></tbody>
+</table>
+
 <script>
 const RATE = 13;
 let data = JSON.parse(localStorage.getItem("trip_app")) || [];
@@ -34,14 +202,9 @@ function calc(day){
     sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0),0);
 }
 
-/* DATE FORMAT */
+/* DATE */
 function formatDate(date){
-  if(!date) return `
-    <div class="fechaTexto">
-      <div>Sin fecha</div>
-    </div>
-  `;
-
+  if(!date) return "";
   const d = new Date(date);
   const days=['dom','lun','mar','mié','jue','vie','sáb'];
   const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
@@ -61,16 +224,13 @@ function render(){
   app.innerHTML = "";
 
   data.forEach((day,di)=>{
-
     const total = calc(day);
 
     app.innerHTML += `
       <tr>
-
         <td class="dia">
           <input type="date" value="${day.date || ""}"
           onchange="data[${di}].date=this.value; save(); render()">
-
           ${formatDate(day.date)}
         </td>
 
@@ -78,12 +238,10 @@ function render(){
           <button onclick="addActivity(${di})">+ Actividad</button>
 
           ${day.activities.map((a,ai)=>`
-
             <div class="block">
-
               <div class="header">
                 <input placeholder="Actividad" value="${a.name || ""}"
-                oninput="data[${di}].activities[${ai}].name=this.value; save()">
+                onchange="data[${di}].activities[${ai}].name=this.value; save()">
 
                 <button class="del"
                 onclick="data[${di}].activities.splice(${ai},1); save(); render()">✕</button>
@@ -91,33 +249,28 @@ function render(){
 
               ${a.expenses.map((e,ei)=>`
                 <div class="exp-row">
-
                   <div class="exp-name">
                     <input placeholder="gasto" value="${e.name || ""}"
-                    oninput="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()">
+                    onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()">
                   </div>
 
                   <div class="exp-value">
                     <input type="number" value="${e.value || 0}"
-                    oninput="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()">
+                    onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()">
                   </div>
 
                   <button class="del"
                   onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()">✕</button>
-
                 </div>
               `).join("")}
 
               <button onclick="addExpense(${di},${ai})">+ gasto</button>
-
             </div>
-
           `).join("")}
         </td>
 
         <td>CAD $${total.toFixed(2)}</td>
         <td>MXN $${(total*RATE).toFixed(2)}</td>
-
       </tr>
     `;
   });
@@ -130,3 +283,6 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 </script>
+
+</body>
+</html>
