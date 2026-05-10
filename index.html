@@ -19,14 +19,27 @@ body {
   padding: 20px;
 }
 
+.topbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
 button {
   background: #1f2937;
   color: white;
   border: 1px solid #2d3748;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 12px;
   cursor: pointer;
-  margin: 5px;
+  transition: 0.2s;
+  font-weight: 600;
+}
+
+button:hover{
+  transform: translateY(-1px);
+  background:#273244;
 }
 
 table {
@@ -50,6 +63,7 @@ td {
   border-radius: 14px;
   background: #111827;
   border: 1px solid rgba(76,201,240,0.25);
+  vertical-align: top;
 }
 
 .dia {
@@ -66,22 +80,19 @@ td {
   font-size: 15px;
 }
 
-/* ICONO DEL CALENDARIO ROSA/BLANCO */
+/* ICONO CALENDARIO ROSA */
 .dia input::-webkit-calendar-picker-indicator {
-  filter: brightness(0)
-          saturate(100%)
-          invert(73%)
-          sepia(38%)
-          saturate(748%)
-          hue-rotate(291deg)
-          brightness(101%)
-          contrast(101%);
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(73%)
+    sepia(38%)
+    saturate(748%)
+    hue-rotate(291deg)
+    brightness(101%)
+    contrast(101%);
   cursor: pointer;
   opacity: 1;
-}
-
-.dia input[type="date"]{
-  color-scheme: dark;
 }
 
 .fechaTexto {
@@ -104,7 +115,7 @@ td {
 .fechaTexto div:nth-child(2){
   font-size:28px;
   font-weight:700;
-  color: rgba(247,37,133,0.55);
+  color: rgba(247,37,133,0.65);
 }
 
 .fechaTexto div:nth-child(3){
@@ -153,6 +164,7 @@ input {
   background: transparent;
   border: none;
   color: white;
+  outline: none;
 }
 
 .del {
@@ -160,15 +172,47 @@ input {
   border: none;
   color: #9ca3af;
   cursor: pointer;
+  padding: 4px 8px;
+}
+
+.totalBox{
+  font-weight:700;
+  white-space:nowrap;
+}
+
+@media(max-width:900px){
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr{
+    display:block;
+    width:100%;
+  }
+
+  th{
+    display:none;
+  }
+
+  tr{
+    margin-bottom:20px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<button onclick="addDay()">➕ Día</button>
+<div class="topbar">
+  <button onclick="addDay()">➕ Día</button>
+  <button onclick="downloadPDF()">📄 Descargar PDF</button>
+  <button onclick="clearAll()">🗑️ Limpiar</button>
+</div>
 
-<table>
+<table id="pdfArea">
+
 <thead>
 <tr>
 <th>Día</th>
@@ -179,52 +223,96 @@ input {
 </thead>
 
 <tbody id="app"></tbody>
+
 </table>
 
 <script>
 const RATE = 13;
-let data = JSON.parse(localStorage.getItem("trip_app")) || [];
+
+let data = JSON.parse(
+  localStorage.getItem("trip_app")
+) || [];
 
 /* SAVE */
 function save(){
-  localStorage.setItem("trip_app", JSON.stringify(data));
+  localStorage.setItem(
+    "trip_app",
+    JSON.stringify(data)
+  );
 }
 
 /* ADD DAY */
 function addDay(){
-  data.push({ date:"", activities:[] });
+
+  data.push({
+    date:"",
+    activities:[]
+  });
+
   save();
   render();
 }
 
 /* ADD ACTIVITY */
 function addActivity(d){
-  data[d].activities.push({ name:"", expenses:[] });
+
+  data[d].activities.push({
+    name:"",
+    expenses:[]
+  });
+
   save();
   render();
 }
 
 /* ADD EXPENSE */
 function addExpense(d,a){
-  data[d].activities[a].expenses.push({ name:"", value:0 });
+
+  data[d]
+  .activities[a]
+  .expenses.push({
+    name:"",
+    value:0
+  });
+
   save();
   render();
 }
 
-/* CALC */
+/* CALCULATE */
 function calc(day){
-  return day.activities.reduce((sum,a)=>
-    sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0),0);
+
+  return day.activities.reduce(
+    (sum,a)=>
+
+    sum +
+
+    a.expenses.reduce(
+      (s,e)=>s+(Number(e.value)||0),
+      0
+    ),
+
+    0
+  );
 }
 
-/* DATE */
+/* FORMAT DATE */
 function formatDate(date){
+
   if(!date) return "";
 
   const d = new Date(date);
 
-  const days = ['dom','lun','mar','mié','jue','vie','sáb'];
-  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const days = [
+    'dom','lun','mar',
+    'mié','jue','vie','sáb'
+  ];
+
+  const months = [
+    'ene','feb','mar','abr',
+    'may','jun','jul','ago',
+    'sep','oct','nov','dic'
+  ];
 
   return `
     <div class="fechaTexto">
@@ -239,6 +327,7 @@ function formatDate(date){
 function render(){
 
   const app = document.getElementById("app");
+
   app.innerHTML = "";
 
   data.forEach((day,di)=>{
@@ -246,6 +335,7 @@ function render(){
     const total = calc(day);
 
     app.innerHTML += `
+
       <tr>
 
         <td class="dia">
@@ -253,7 +343,11 @@ function render(){
           <input
             type="date"
             value="${day.date || ""}"
-            onchange="data[${di}].date=this.value; save(); render()"
+            onchange="
+              data[${di}].date=this.value;
+              save();
+              render();
+            "
           >
 
           ${formatDate(day.date)}
@@ -275,12 +369,24 @@ function render(){
                 <input
                   placeholder="Actividad"
                   value="${a.name || ""}"
-                  onchange="data[${di}].activities[${ai}].name=this.value; save()"
+                  onchange="
+                    data[${di}]
+                    .activities[${ai}]
+                    .name=this.value;
+                    save();
+                  "
                 >
 
                 <button
                   class="del"
-                  onclick="data[${di}].activities.splice(${ai},1); save(); render()"
+                  onclick="
+                    data[${di}]
+                    .activities
+                    .splice(${ai},1);
+
+                    save();
+                    render();
+                  "
                 >
                   ✕
                 </button>
@@ -296,7 +402,14 @@ function render(){
                     <input
                       placeholder="gasto"
                       value="${e.name || ""}"
-                      onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()"
+                      onchange="
+                        data[${di}]
+                        .activities[${ai}]
+                        .expenses[${ei}]
+                        .name=this.value;
+
+                        save();
+                      "
                     >
 
                   </div>
@@ -306,14 +419,30 @@ function render(){
                     <input
                       type="number"
                       value="${e.value || 0}"
-                      onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()"
+                      onchange="
+                        data[${di}]
+                        .activities[${ai}]
+                        .expenses[${ei}]
+                        .value=this.value;
+
+                        save();
+                        render();
+                      "
                     >
 
                   </div>
 
                   <button
                     class="del"
-                    onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()"
+                    onclick="
+                      data[${di}]
+                      .activities[${ai}]
+                      .expenses
+                      .splice(${ei},1);
+
+                      save();
+                      render();
+                    "
                   >
                     ✕
                   </button>
@@ -332,26 +461,73 @@ function render(){
 
         </td>
 
-        <td>
+        <td class="totalBox">
           CAD $${total.toFixed(2)}
         </td>
 
-        <td>
+        <td class="totalBox">
           MXN $${(total * RATE).toFixed(2)}
         </td>
 
       </tr>
+
     `;
   });
 }
 
+/* CLEAR */
+function clearAll(){
+
+  if(confirm("¿Borrar todo el itinerario?")){
+
+    data = [];
+
+    save();
+    render();
+  }
+}
+
 render();
+
+/* PDF */
+function downloadPDF(){
+
+  const element = document.getElementById("pdfArea");
+
+  const opt = {
+    margin: 0.4,
+    filename: 'itinerario.pdf',
+
+    image: {
+      type: 'jpeg',
+      quality: 1
+    },
+
+    html2canvas: {
+      scale: 2,
+      useCORS: true
+    },
+
+    jsPDF: {
+      unit: 'in',
+      format: 'letter',
+      orientation: 'portrait'
+    }
+  };
+
+  html2pdf()
+    .set(opt)
+    .from(element)
+    .save();
+}
 
 /* PWA */
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </body>
 </html>
