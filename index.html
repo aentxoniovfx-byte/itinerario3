@@ -63,10 +63,19 @@ td {
   color: white;
   text-align: center;
   color-scheme: dark;
+  font-size: 15px;
 }
 
+/* ICONO DEL CALENDARIO ROSA/BLANCO */
 .dia input::-webkit-calendar-picker-indicator {
-  filter: brightness(0) saturate(100%) invert(73%) sepia(38%) saturate(748%) hue-rotate(291deg) brightness(101%) contrast(101%);
+  filter: brightness(0)
+          saturate(100%)
+          invert(73%)
+          sepia(38%)
+          saturate(748%)
+          hue-rotate(291deg)
+          brightness(101%)
+          contrast(101%);
   cursor: pointer;
   opacity: 1;
 }
@@ -79,7 +88,8 @@ td {
   margin-top: 8px;
   padding: 10px;
   border-radius: 12px;
-  background: linear-gradient(135deg,
+  background: linear-gradient(
+    135deg,
     rgba(76,201,240,0.12),
     rgba(247,37,133,0.10)
   );
@@ -210,9 +220,11 @@ function calc(day){
 /* DATE */
 function formatDate(date){
   if(!date) return "";
+
   const d = new Date(date);
-  const days=['dom','lun','mar','mié','jue','vie','sáb'];
-  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  const days = ['dom','lun','mar','mié','jue','vie','sáb'];
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
   return `
     <div class="fechaTexto">
@@ -225,57 +237,109 @@ function formatDate(date){
 
 /* RENDER */
 function render(){
+
   const app = document.getElementById("app");
   app.innerHTML = "";
 
   data.forEach((day,di)=>{
+
     const total = calc(day);
 
     app.innerHTML += `
       <tr>
+
         <td class="dia">
-          <input type="date" value="${day.date || ""}"
-          onchange="data[${di}].date=this.value; save(); render()">
+
+          <input
+            type="date"
+            value="${day.date || ""}"
+            onchange="data[${di}].date=this.value; save(); render()"
+          >
+
           ${formatDate(day.date)}
+
         </td>
 
         <td>
-          <button onclick="addActivity(${di})">+ Actividad</button>
+
+          <button onclick="addActivity(${di})">
+            + Actividad
+          </button>
 
           ${day.activities.map((a,ai)=>`
-            <div class="block">
-              <div class="header">
-                <input placeholder="Actividad" value="${a.name || ""}"
-                onchange="data[${di}].activities[${ai}].name=this.value; save()">
 
-                <button class="del"
-                onclick="data[${di}].activities.splice(${ai},1); save(); render()">✕</button>
+            <div class="block">
+
+              <div class="header">
+
+                <input
+                  placeholder="Actividad"
+                  value="${a.name || ""}"
+                  onchange="data[${di}].activities[${ai}].name=this.value; save()"
+                >
+
+                <button
+                  class="del"
+                  onclick="data[${di}].activities.splice(${ai},1); save(); render()"
+                >
+                  ✕
+                </button>
+
               </div>
 
               ${a.expenses.map((e,ei)=>`
+
                 <div class="exp-row">
+
                   <div class="exp-name">
-                    <input placeholder="gasto" value="${e.name || ""}"
-                    onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()">
+
+                    <input
+                      placeholder="gasto"
+                      value="${e.name || ""}"
+                      onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()"
+                    >
+
                   </div>
 
                   <div class="exp-value">
-                    <input type="number" value="${e.value || 0}"
-                    onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()">
+
+                    <input
+                      type="number"
+                      value="${e.value || 0}"
+                      onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()"
+                    >
+
                   </div>
 
-                  <button class="del"
-                  onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()">✕</button>
+                  <button
+                    class="del"
+                    onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()"
+                  >
+                    ✕
+                  </button>
+
                 </div>
+
               `).join("")}
 
-              <button onclick="addExpense(${di},${ai})">+ gasto</button>
+              <button onclick="addExpense(${di},${ai})">
+                + gasto
+              </button>
+
             </div>
+
           `).join("")}
+
         </td>
 
-        <td>CAD $${total.toFixed(2)}</td>
-        <td>MXN $${(total*RATE).toFixed(2)}</td>
+        <td>
+          CAD $${total.toFixed(2)}
+        </td>
+
+        <td>
+          MXN $${(total * RATE).toFixed(2)}
+        </td>
+
       </tr>
     `;
   });
