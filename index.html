@@ -66,8 +66,13 @@ td {
 }
 
 .dia input::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+  filter: brightness(0) saturate(100%) invert(73%) sepia(38%) saturate(748%) hue-rotate(291deg) brightness(101%) contrast(101%);
   cursor: pointer;
+  opacity: 1;
+}
+
+.dia input[type="date"]{
+  color-scheme: dark;
 }
 
 .fechaTexto {
