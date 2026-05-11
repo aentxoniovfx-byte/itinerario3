@@ -1,638 +1,413 @@
+# index.html
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Itinerario Blue Pink</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Pink Itinerary</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f1115">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #0f1115;
-  color: #e6e6e6;
-  padding: 20px;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.topbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:10px;
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:
+    radial-gradient(circle at top left,#4facfe22,transparent 30%),
+    radial-gradient(circle at bottom right,#ff6ec722,transparent 30%),
+    linear-gradient(135deg,#07111f,#0f172a,#131c31);
+    color:white;
+    padding:40px 20px;
 }
 
-button {
-  background: #1f2937;
-  color: white;
-  border: 1px solid #2d3748;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-weight: 600;
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.title{
+    font-size:2rem;
+    font-weight:700;
+    background:linear-gradient(90deg,#5ab2ff,#ff71ce);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+button{
+    border:none;
+    padding:12px 18px;
+    border-radius:16px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    cursor:pointer;
+    backdrop-filter:blur(12px);
+    transition:0.25s;
+    font-weight:600;
 }
 
 button:hover{
-  transform: translateY(-1px);
-  background:#273244;
+    transform:translateY(-2px);
+    background:rgba(255,255,255,0.15);
 }
 
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 10px;
-  margin-top: 15px;
+.card{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    backdrop-filter:blur(16px);
+    border-radius:28px;
+    padding:24px;
+    margin-bottom:25px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
 }
 
-th {
-  text-align: center;
-  font-weight: 800;
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid #2d333b;
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:1.2rem;
+    margin-bottom:18px;
+    font-weight:600;
 }
 
-td {
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid rgba(76,201,240,0.25);
-  vertical-align: top;
+.section-title i{
+    color:#7dc7ff;
 }
 
-.dia {
-  text-align: center;
+.input-group{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr auto;
+    gap:12px;
 }
 
-.dia input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  text-align: center;
-  color-scheme: dark;
-  font-size: 15px;
-}
-
-/* ICONO CALENDARIO ROSA */
-.dia input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.95;
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(77%)
-    sepia(32%)
-    saturate(2400%)
-    hue-rotate(185deg)
-    brightness(115%)
-    contrast(105%)
-    drop-shadow(0 0 4px rgba(76,201,240,0.8))
-    drop-shadow(0 0 8px rgba(247,37,133,0.55));
-
-  transition: 0.25s ease;
-}
-
-.dia input::-webkit-calendar-picker-indicator:hover {
-
-  transform: scale(1.08);
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(79%)
-    sepia(45%)
-    saturate(2600%)
-    hue-rotate(190deg)
-    brightness(125%)
-    contrast(110%)
-    drop-shadow(0 0 6px rgba(76,201,240,1))
-    drop-shadow(0 0 12px rgba(247,37,133,0.9));
-}
-
-.fechaTexto {
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
-  );
-  border: 1px solid rgba(76,201,240,0.25);
-}
-
-.fechaTexto div:nth-child(1){
-  font-size:13px;
-  color: rgba(76,201,240,0.85);
-}
-
-.fechaTexto div:nth-child(2){
-  font-size:28px;
-  font-weight:700;
-  color: rgba(247,37,133,0.65);
-}
-
-.fechaTexto div:nth-child(3){
-  font-size:13px;
-  color: rgba(247,37,133,0.75);
-}
-
-.block {
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(76,201,240,0.2);
-}
-
-.header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.exp-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.exp-name {
-  flex: 1;
-  padding: 8px;
-  border-radius: 10px;
-  background: rgba(76,201,240,0.08);
-  border: 1px solid rgba(76,201,240,0.25);
-}
-
-.exp-value {
-  width: 110px;
-  padding: 8px;
-  border-radius: 10px;
-  background: rgba(247,37,133,0.08);
-  border: 1px solid rgba(247,37,133,0.25);
-}
-
-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  outline: none;
-}
-
-.del {
-  background: transparent;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-
-.totalBox{
-  font-weight:700;
-  white-space:nowrap;
-}
-
-/* TOTAL GENERAL */
-
-.grandTotal{
-  margin-top: 20px;
-  padding: 22px;
-  border-radius: 18px;
-  background: linear-gradient(
-    135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
-  );
-  border: 1px solid rgba(247,37,133,0.25);
-  backdrop-filter: blur(8px);
-}
-
-.grandTitle{
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 15px;
-}
-
-.grandRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 14px;
-  margin-top:10px;
-  border-radius:14px;
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(76,201,240,0.18);
-}
-
-.grandLabel{
-  color:#9dd9ff;
-  font-weight:600;
-}
-
-.grandValue{
-  font-size:22px;
-  font-weight:800;
-  color:#ff8dc7;
-}
-
-@media(max-width:900px){
-
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr{
-    display:block;
+input, textarea{
     width:100%;
-  }
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.1);
+    color:white;
+    padding:14px;
+    border-radius:16px;
+    outline:none;
+    font-family:inherit;
+}
 
-  th{
-    display:none;
-  }
+textarea{
+    resize:vertical;
+    min-height:80px;
+}
 
-  tr{
-    margin-bottom:20px;
-  }
+input::placeholder,
+textarea::placeholder{
+    color:#c7d3e0;
+}
+
+.add-btn{
+    background:linear-gradient(135deg,#5ab2ff,#ff71ce);
+}
+
+.event{
+    padding:18px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.05);
+    margin-top:16px;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.event-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+}
+
+.event-title{
+    font-weight:700;
+    font-size:1.1rem;
+}
+
+.date{
+    color:#7dc7ff;
+    font-size:0.95rem;
+}
+
+.notes{
+    color:#d8dce3;
+    line-height:1.5;
+}
+
+.delete-btn{
+    background:#ff4b6e;
+}
+
+.calendar-icon{
+    background:linear-gradient(135deg,#5ab2ff,#ff71ce);
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:14px;
+    color:white;
+}
+
+@media(max-width:800px){
+
+.input-group{
+    grid-template-columns:1fr;
+}
+
+.header{
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+.actions{
+    width:100%;
+}
+
+button{
+    width:100%;
+}
+
 }
 </style>
 </head>
-
 <body>
 
-<div class="topbar">
-  <button onclick="addDay()">➕ Día</button>
-  <button onclick="downloadPDF()">📄 Descargar PDF</button>
-  <button onclick="clearAll()">🗑️ Limpiar</button>
+<div class="container" id="content">
+
+<div class="header">
+    <div>
+        <h1 class="title">Blue Pink Itinerary</h1>
+    </div>
+
+    <div class="actions">
+        <button onclick="exportData()">
+            <i class="fa-solid fa-file-export"></i>
+            Exportar
+        </button>
+
+        <button onclick="document.getElementById('importFile').click()">
+            <i class="fa-solid fa-file-import"></i>
+            Importar
+        </button>
+
+        <button onclick="downloadPDF()">
+            <i class="fa-solid fa-file-pdf"></i>
+            PDF
+        </button>
+    </div>
 </div>
 
-<div id="pdfArea">
+<input type="file" id="importFile" hidden>
 
-<table>
+<div class="card">
 
-<thead>
-<tr>
-<th>Día</th>
-<th>Actividades</th>
-<th>CAD</th>
-<th>MXN</th>
-</tr>
-</thead>
-
-<tbody id="app"></tbody>
-
-</table>
-
-<!-- TOTAL GENERAL -->
-
-<div class="grandTotal">
-
-  <div class="grandTitle">
-    💰 Total General
-  </div>
-
-  <div class="grandRow">
-    <div class="grandLabel">Total CAD</div>
-    <div class="grandValue">
-      $<span id="grandCAD">0.00</span>
+<div class="section-title">
+    <div class="calendar-icon">
+        <i class="fa-solid fa-calendar-days"></i>
     </div>
-  </div>
+    Nuevo Evento
+</div>
 
-  <div class="grandRow">
-    <div class="grandLabel">Total MXN</div>
-    <div class="grandValue">
-      $<span id="grandMXN">0.00</span>
-    </div>
-  </div>
+<div class="input-group">
+    <input type="text" id="title" placeholder="Título">
+    <input type="date" id="date">
+    <input type="time" id="time">
+
+    <button class="add-btn" onclick="addEvent()">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+</div>
+
+<br>
+
+<textarea id="notes" placeholder="Notas..."></textarea>
 
 </div>
+
+<div id="events"></div>
 
 </div>
 
 <script>
-const RATE = 13;
 
-let data = JSON.parse(
-  localStorage.getItem("trip_app")
-) || [];
+let itinerary = [];
 
-/* SAVE */
-function save(){
-  localStorage.setItem(
-    "trip_app",
-    JSON.stringify(data)
-  );
+function saveData(){
+    localStorage.setItem('bluePinkItinerary', JSON.stringify(itinerary));
 }
 
-/* ADD DAY */
-function addDay(){
+function loadData(){
+    const saved = localStorage.getItem('bluePinkItinerary');
 
-  data.push({
-    date:"",
-    activities:[]
-  });
-
-  save();
-  render();
+    if(saved){
+        itinerary = JSON.parse(saved);
+        renderEvents();
+    }
 }
 
-/* ADD ACTIVITY */
-function addActivity(d){
+function addEvent(){
 
-  data[d].activities.push({
-    name:"",
-    expenses:[]
-  });
+    const title = document.getElementById('title').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const notes = document.getElementById('notes').value;
 
-  save();
-  render();
+    if(!title || !date){
+        alert('Agrega título y fecha');
+        return;
+    }
+
+    itinerary.push({
+        id:Date.now(),
+        title,
+        date,
+        time,
+        notes
+    });
+
+    saveData();
+    renderEvents();
+
+    document.getElementById('title').value='';
+    document.getElementById('date').value='';
+    document.getElementById('time').value='';
+    document.getElementById('notes').value='';
 }
 
-/* ADD EXPENSE */
-function addExpense(d,a){
+function renderEvents(){
 
-  data[d]
-  .activities[a]
-  .expenses.push({
-    name:"",
-    value:0
-  });
+    const container = document.getElementById('events');
 
-  save();
-  render();
-}
+    container.innerHTML='';
 
-/* CALCULATE */
-function calc(day){
+    itinerary.sort((a,b)=> new Date(a.date) - new Date(b.date));
 
-  return day.activities.reduce(
-    (sum,a)=>
+    itinerary.forEach(event=>{
 
-    sum +
+        container.innerHTML += `
+        <div class="card event">
 
-    a.expenses.reduce(
-      (s,e)=>s+(Number(e.value)||0),
-      0
-    ),
-
-    0
-  );
-}
-
-/* FORMAT DATE */
-function formatDate(date){
-
-  if(!date) return "";
-
-  const d = new Date(date);
-
-  const days = [
-    'dom','lun','mar',
-    'mié','jue','vie','sáb'
-  ];
-
-  const months = [
-    'ene','feb','mar','abr',
-    'may','jun','jul','ago',
-    'sep','oct','nov','dic'
-  ];
-
-  return `
-    <div class="fechaTexto">
-      <div>${months[d.getMonth()]}</div>
-      <div>${d.getDate()}</div>
-      <div>${days[d.getDay()]}</div>
-    </div>
-  `;
-}
-
-/* RENDER */
-function render(){
-
-  const app = document.getElementById("app");
-
-  app.innerHTML = "";
-
-  let grandTotalCAD = 0;
-
-  data.forEach((day,di)=>{
-
-    const total = calc(day);
-
-    grandTotalCAD += total;
-
-    app.innerHTML += `
-
-      <tr>
-
-        <td class="dia">
-
-          <input
-            type="date"
-            value="${day.date || ""}"
-            onchange="
-              data[${di}].date=this.value;
-              save();
-              render();
-            "
-          >
-
-          ${formatDate(day.date)}
-
-        </td>
-
-        <td>
-
-          <button onclick="addActivity(${di})">
-            + Actividad
-          </button>
-
-          ${day.activities.map((a,ai)=>`
-
-            <div class="block">
-
-              <div class="header">
-
-                <input
-                  placeholder="Actividad"
-                  value="${a.name || ""}"
-                  onchange="
-                    data[${di}]
-                    .activities[${ai}]
-                    .name=this.value;
-                    save();
-                  "
-                >
-
-                <button
-                  class="del"
-                  onclick="
-                    data[${di}]
-                    .activities
-                    .splice(${ai},1);
-
-                    save();
-                    render();
-                  "
-                >
-                  ✕
-                </button>
-
-              </div>
-
-              ${a.expenses.map((e,ei)=>`
-
-                <div class="exp-row">
-
-                  <div class="exp-name">
-
-                    <input
-                      placeholder="gasto"
-                      value="${e.name || ""}"
-                      onchange="
-                        data[${di}]
-                        .activities[${ai}]
-                        .expenses[${ei}]
-                        .name=this.value;
-
-                        save();
-                      "
-                    >
-
-                  </div>
-
-                  <div class="exp-value">
-
-                    <input
-                      type="number"
-                      value="${e.value || 0}"
-                      onchange="
-                        data[${di}]
-                        .activities[${ai}]
-                        .expenses[${ei}]
-                        .value=this.value;
-
-                        save();
-                        render();
-                      "
-                    >
-
-                  </div>
-
-                  <button
-                    class="del"
-                    onclick="
-                      data[${di}]
-                      .activities[${ai}]
-                      .expenses
-                      .splice(${ei},1);
-
-                      save();
-                      render();
-                    "
-                  >
-                    ✕
-                  </button>
-
+            <div class="event-header">
+                <div>
+                    <div class="event-title">${event.title}</div>
+                    <div class="date">
+                        <i class="fa-regular fa-calendar"></i>
+                        ${event.date}
+                        ${event.time ? '• '+event.time : ''}
+                    </div>
                 </div>
 
-              `).join("")}
-
-              <button onclick="addExpense(${di},${ai})">
-                + gasto
-              </button>
-
+                <button class="delete-btn" onclick="deleteEvent(${event.id})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
             </div>
 
-          `).join("")}
+            <div class="notes">
+                ${event.notes || ''}
+            </div>
 
-        </td>
+        </div>
+        `;
 
-        <td class="totalBox">
-          CAD $${total.toFixed(2)}
-        </td>
-
-        <td class="totalBox">
-          MXN $${(total * RATE).toFixed(2)}
-        </td>
-
-      </tr>
-
-    `;
-  });
-
-  /* TOTAL GENERAL */
-
-  document.getElementById("grandCAD").textContent =
-    grandTotalCAD.toFixed(2);
-
-  document.getElementById("grandMXN").textContent =
-    (grandTotalCAD * RATE).toFixed(2);
+    });
 }
 
-/* CLEAR */
-function clearAll(){
+function deleteEvent(id){
 
-  if(confirm("¿Borrar todo el itinerario?")){
+    itinerary = itinerary.filter(event=> event.id !== id);
 
-    data = [];
-
-    save();
-    render();
-  }
+    saveData();
+    renderEvents();
 }
 
-render();
+function exportData(){
 
-/* PDF */
+    const dataStr = JSON.stringify(itinerary, null, 2);
+
+    const blob = new Blob([dataStr], {
+        type:'application/json'
+    });
+
+    const a = document.createElement('a');
+
+    a.href = URL.createObjectURL(blob);
+    a.download = 'blue-pink-itinerary.json';
+    a.click();
+}
+
+document.getElementById('importFile').addEventListener('change', function(e){
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+        try{
+            itinerary = JSON.parse(event.target.result);
+
+            saveData();
+            renderEvents();
+
+            alert('Itinerario importado correctamente');
+
+        }catch(err){
+            alert('Archivo inválido');
+        }
+
+    };
+
+    reader.readAsText(file);
+});
+
 function downloadPDF(){
 
-  const element = document.getElementById("pdfArea");
+    const element = document.getElementById('content');
 
-  const opt = {
-    margin: 0.4,
-    filename: 'itinerario.pdf',
+    const options = {
+        margin:0.5,
+        filename:'BluePinkItinerary.pdf',
+        image:{ type:'jpeg', quality:1 },
+        html2canvas:{ scale:2 },
+        jsPDF:{ unit:'in', format:'letter', orientation:'portrait' }
+    };
 
-    image: {
-      type: 'jpeg',
-      quality: 1
-    },
-
-    html2canvas: {
-      scale: 2,
-      useCORS: true
-    },
-
-    jsPDF: {
-      unit: 'in',
-      format: 'letter',
-      orientation: 'portrait'
-    }
-  };
-
-  html2pdf()
-    .set(opt)
-    .from(element)
-    .save();
+    html2pdf().set(options).from(element).save();
 }
 
-/* PWA */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
+loadData();
+
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </body>
 </html>
+```
