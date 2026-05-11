@@ -180,6 +180,49 @@ input {
   white-space:nowrap;
 }
 
+/* TOTAL GENERAL */
+
+.grandTotal{
+  margin-top: 20px;
+  padding: 22px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(76,201,240,0.12),
+    rgba(247,37,133,0.10)
+  );
+  border: 1px solid rgba(247,37,133,0.25);
+  backdrop-filter: blur(8px);
+}
+
+.grandTitle{
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.grandRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 14px;
+  margin-top:10px;
+  border-radius:14px;
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(76,201,240,0.18);
+}
+
+.grandLabel{
+  color:#9dd9ff;
+  font-weight:600;
+}
+
+.grandValue{
+  font-size:22px;
+  font-weight:800;
+  color:#ff8dc7;
+}
+
 @media(max-width:900px){
 
   table,
@@ -211,7 +254,9 @@ input {
   <button onclick="clearAll()">🗑️ Limpiar</button>
 </div>
 
-<table id="pdfArea">
+<div id="pdfArea">
+
+<table>
 
 <thead>
 <tr>
@@ -225,6 +270,32 @@ input {
 <tbody id="app"></tbody>
 
 </table>
+
+<!-- TOTAL GENERAL -->
+
+<div class="grandTotal">
+
+  <div class="grandTitle">
+    💰 Total General
+  </div>
+
+  <div class="grandRow">
+    <div class="grandLabel">Total CAD</div>
+    <div class="grandValue">
+      $<span id="grandCAD">0.00</span>
+    </div>
+  </div>
+
+  <div class="grandRow">
+    <div class="grandLabel">Total MXN</div>
+    <div class="grandValue">
+      $<span id="grandMXN">0.00</span>
+    </div>
+  </div>
+
+</div>
+
+</div>
 
 <script>
 const RATE = 13;
@@ -330,9 +401,13 @@ function render(){
 
   app.innerHTML = "";
 
+  let grandTotalCAD = 0;
+
   data.forEach((day,di)=>{
 
     const total = calc(day);
+
+    grandTotalCAD += total;
 
     app.innerHTML += `
 
@@ -473,6 +548,14 @@ function render(){
 
     `;
   });
+
+  /* TOTAL GENERAL */
+
+  document.getElementById("grandCAD").textContent =
+    grandTotalCAD.toFixed(2);
+
+  document.getElementById("grandMXN").textContent =
+    (grandTotalCAD * RATE).toFixed(2);
 }
 
 /* CLEAR */
