@@ -318,23 +318,35 @@ input {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+<script type="module">
 
-// Your web app's Firebase configuration
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCXKiui1-tSBvn9k2kagulXQY77v6EhSQM",
-  authDomain: "snooks-aad12.firebaseapp.com",
-  projectId: "snooks-aad12",
-  storageBucket: "snooks-aad12.firebasestorage.app",
-  messagingSenderId: "264812199556",
-  appId: "1:264812199556:web:ec6c7a64c08d86f29bccd1"
-};
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+  apiKey: "TU_API_KEY",
+
+  authDomain: "TU_PROJECT.firebaseapp.com",
+
+  projectId: "TU_PROJECT",
+
+  storageBucket: "TU_PROJECT.appspot.com",
+
+  messagingSenderId: "XXXX",
+
+  appId: "XXXX"
+};
 
 const appFirebase = initializeApp(firebaseConfig);
 
