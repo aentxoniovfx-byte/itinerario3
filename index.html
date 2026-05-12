@@ -21,50 +21,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const docRef = doc(db, "itinerary", "main");
+const ref = doc(db, "itinerary", "main");
 
 /* DATA */
 let data = [];
 const RATE = 13;
 
-/* 🔥 REALTIME SYNC (NO rompe UI) */
-onSnapshot(docRef, (snap) => {
+/* 🔥 REALTIME SYNC */
+onSnapshot(ref, (snap) => {
   if (snap.exists()) {
     data = snap.data().data || [];
-    render(); // SOLO refresca datos, NO toca diseño
+    render(); // SOLO refresca datos, NO cambia diseño
   }
 });
 
-/* 🔥 SAVE (silencioso, sin render duplicado) */
+/* 🔥 SAVE (sin romper UI) */
 function save(){
-  setDoc(docRef, {
+  setDoc(ref, {
     data,
     updatedAt: Date.now()
   });
 }
 
-/* ADD DAY */
+/* ===== TODO LO DEMÁS ES TU CÓDIGO ORIGINAL ===== */
+
 window.addDay = function(){
   data.push({date:"", activities:[]});
   save();
   render();
 }
 
-/* ADD ACTIVITY */
 window.addActivity = function(d){
   data[d].activities.push({name:"", expenses:[]});
   save();
   render();
 }
 
-/* ADD EXPENSE */
 window.addExpense = function(d,a){
   data[d].activities[a].expenses.push({name:"", value:0});
   save();
   render();
 }
 
-/* CALC (igual que tu versión) */
 function calc(day){
   return day.activities.reduce(
     (sum,a)=>
@@ -74,7 +72,6 @@ function calc(day){
   );
 }
 
-/* FORMAT DATE (igual) */
 function formatDate(date){
 
   if(!date) return "";
@@ -93,18 +90,18 @@ function formatDate(date){
   `;
 }
 
-/* 🔥 RENDER (NO TOCAMOS TU DISEÑO) */
+/* 🔥 TU RENDER ORIGINAL (NO LO TOCO VISUALMENTE) */
 function render(){
 
   const appEl = document.getElementById("app");
   appEl.innerHTML = "";
 
-  let grandTotalCAD = 0;
+  let totalCAD = 0;
 
   data.forEach((day,di)=>{
 
     const total = calc(day);
-    grandTotalCAD += total;
+    totalCAD += total;
 
     appEl.innerHTML += `
       <tr>
@@ -202,15 +199,15 @@ function render(){
     `;
   });
 
-  document.getElementById("grandCAD").textContent = grandTotalCAD.toFixed(2);
-  document.getElementById("grandMXN").textContent = (grandTotalCAD*RATE).toFixed(2);
+  document.getElementById("grandCAD").textContent = totalCAD.toFixed(2);
+  document.getElementById("grandMXN").textContent = (totalCAD*RATE).toFixed(2);
 
   window.data = data;
 }
 
 /* CLEAR */
 window.clearAll = function(){
-  if(confirm("¿Borrar todo el itinerario?")){
+  if(confirm("¿Borrar todo?")){
     data = [];
     save();
     render();
