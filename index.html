@@ -1,200 +1,161 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <title>Itinerario Blue Pink</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#0f1115">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f1115">
-
 <style>
 
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #0f1115;
-  color: #e6e6e6;
-  padding: 20px;
+body{
+  margin:0;
+  padding:20px;
+  background:#0f1115;
+  color:#e6e6e6;
+  font-family:'Inter',sans-serif;
 }
 
 .topbar{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-bottom:10px;
+  margin-bottom:15px;
 }
 
-button {
-  background: #1f2937;
-  color: white;
-  border: 1px solid #2d3748;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-weight: 600;
+button{
+  background:#1f2937;
+  color:white;
+  border:1px solid #2d3748;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.2s;
 }
 
 button:hover{
-  transform: translateY(-1px);
+  transform:translateY(-1px);
   background:#273244;
 }
 
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 10px;
-  margin-top: 15px;
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:10px;
 }
 
-th {
-  text-align: center;
-  font-weight: 800;
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid #2d333b;
+th{
+  padding:14px;
+  background:#111827;
+  border-radius:14px;
+  border:1px solid #2d333b;
 }
 
-td {
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid rgba(76,201,240,0.25);
-  vertical-align: top;
+td{
+  vertical-align:top;
+  padding:14px;
+  background:#111827;
+  border-radius:14px;
+  border:1px solid rgba(76,201,240,.25);
 }
 
-.dia {
-  text-align: center;
+.dia{
+  text-align:center;
 }
 
-.dia input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  text-align: center;
-  color-scheme: dark;
-  font-size: 15px;
+.dia input{
+  width:100%;
+  text-align:center;
+  background:transparent;
+  border:none;
+  color:white;
+  color-scheme:dark;
+  font-size:15px;
 }
 
-.dia input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.95;
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(77%)
-    sepia(32%)
-    saturate(2400%)
-    hue-rotate(185deg)
-    brightness(115%)
-    contrast(105%)
-    drop-shadow(0 0 4px rgba(76,201,240,0.8))
-    drop-shadow(0 0 8px rgba(247,37,133,0.55));
-
-  transition: 0.25s ease;
-}
-
-.dia input::-webkit-calendar-picker-indicator:hover {
-
-  transform: scale(1.08);
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(79%)
-    sepia(45%)
-    saturate(2600%)
-    hue-rotate(190deg)
-    brightness(125%)
-    contrast(110%)
-    drop-shadow(0 0 6px rgba(76,201,240,1))
-    drop-shadow(0 0 12px rgba(247,37,133,0.9));
-}
-
-.fechaTexto {
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: 12px;
-  background: linear-gradient(
+.fechaTexto{
+  margin-top:8px;
+  padding:10px;
+  border-radius:12px;
+  background:linear-gradient(
     135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
+    rgba(76,201,240,.12),
+    rgba(247,37,133,.10)
   );
-  border: 1px solid rgba(76,201,240,0.25);
 }
 
 .fechaTexto div:nth-child(1){
   font-size:13px;
-  color: rgba(76,201,240,0.85);
+  color:#8edfff;
 }
 
 .fechaTexto div:nth-child(2){
   font-size:28px;
   font-weight:700;
-  color: rgba(247,37,133,0.65);
+  color:#ff87c2;
 }
 
 .fechaTexto div:nth-child(3){
   font-size:13px;
-  color: rgba(247,37,133,0.75);
+  color:#f6a6cb;
 }
 
-.block {
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(76,201,240,0.2);
+.block{
+  margin-bottom:12px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(76,201,240,.2);
 }
 
-.header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+.header{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
 }
 
-.exp-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
+.exp-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
 }
 
-.exp-name {
-  flex: 1;
-  padding: 8px;
-  border-radius: 10px;
-  background: rgba(76,201,240,0.08);
-  border: 1px solid rgba(76,201,240,0.25);
+.exp-name,
+.exp-value{
+  padding:8px;
+  border-radius:10px;
 }
 
-.exp-value {
-  width: 110px;
-  padding: 8px;
-  border-radius: 10px;
-  background: rgba(247,37,133,0.08);
-  border: 1px solid rgba(247,37,133,0.25);
+.exp-name{
+  flex:1;
+  background:rgba(76,201,240,.08);
 }
 
-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  outline: none;
+.exp-value{
+  width:110px;
+  background:rgba(247,37,133,.08);
 }
 
-.del {
-  background: transparent;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 4px 8px;
+input{
+  width:100%;
+  background:transparent;
+  border:none;
+  color:white;
+  outline:none;
+}
+
+.del{
+  background:transparent;
+  border:none;
+  color:#aaa;
+  cursor:pointer;
 }
 
 .totalBox{
@@ -203,44 +164,29 @@ input {
 }
 
 .grandTotal{
-  margin-top: 20px;
-  padding: 22px;
-  border-radius: 18px;
-  background: linear-gradient(
+  margin-top:20px;
+  padding:20px;
+  border-radius:18px;
+  background:linear-gradient(
     135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
+    rgba(76,201,240,.12),
+    rgba(247,37,133,.10)
   );
-  border: 1px solid rgba(247,37,133,0.25);
-  backdrop-filter: blur(8px);
-}
-
-.grandTitle{
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 15px;
 }
 
 .grandRow{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:12px 14px;
   margin-top:10px;
+  padding:12px;
   border-radius:14px;
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(76,201,240,0.18);
-}
-
-.grandLabel{
-  color:#9dd9ff;
-  font-weight:600;
+  background:rgba(255,255,255,.04);
 }
 
 .grandValue{
+  color:#ff8dc7;
   font-size:22px;
   font-weight:800;
-  color:#ff8dc7;
 }
 
 @media(max-width:900px){
@@ -270,9 +216,23 @@ input {
 <body>
 
 <div class="topbar">
-  <button onclick="addDay()">➕ Día</button>
-  <button onclick="downloadPDF()">📄 Descargar PDF</button>
-  <button onclick="clearAll()">🗑️ Limpiar</button>
+
+  <button onclick="addDay()">
+    ➕ Día
+  </button>
+
+  <button onclick="manualSave()">
+    💾 Guardar cambios
+  </button>
+
+  <button onclick="downloadPDF()">
+    📄 Descargar PDF
+  </button>
+
+  <button onclick="clearAll()">
+    🗑️ Limpiar
+  </button>
+
 </div>
 
 <div id="pdfArea">
@@ -281,10 +241,10 @@ input {
 
 <thead>
 <tr>
-<th>Día</th>
-<th>Actividades</th>
-<th>CAD</th>
-<th>MXN</th>
+  <th>Día</th>
+  <th>Actividades</th>
+  <th>CAD</th>
+  <th>MXN</th>
 </tr>
 </thead>
 
@@ -294,19 +254,17 @@ input {
 
 <div class="grandTotal">
 
-  <div class="grandTitle">
-    💰 Total General
-  </div>
+  <h2>💰 Total General</h2>
 
   <div class="grandRow">
-    <div class="grandLabel">Total CAD</div>
+    <div>Total CAD</div>
     <div class="grandValue">
       $<span id="grandCAD">0.00</span>
     </div>
   </div>
 
   <div class="grandRow">
-    <div class="grandLabel">Total MXN</div>
+    <div>Total MXN</div>
     <div class="grandValue">
       $<span id="grandMXN">0.00</span>
     </div>
@@ -320,6 +278,8 @@ input {
 
 <script type="module">
 
+/* FIREBASE */
+
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
@@ -331,26 +291,28 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* FIREBASE CONFIG */
+/* CONFIG */
 
 const firebaseConfig = {
 
-  apiKey: "TU_API_KEY",
+  apiKey:"TU_API_KEY",
 
-  authDomain: "TU_PROJECT.firebaseapp.com",
+  authDomain:"TU_PROJECT.firebaseapp.com",
 
-  projectId: "TU_PROJECT",
+  projectId:"TU_PROJECT",
 
-  storageBucket: "TU_PROJECT.appspot.com",
+  storageBucket:"TU_PROJECT.appspot.com",
 
-  messagingSenderId: "XXXX",
+  messagingSenderId:"XXXX",
 
-  appId: "XXXX"
+  appId:"XXXX"
 };
 
-const appFirebase = initializeApp(firebaseConfig);
+const appFirebase =
+  initializeApp(firebaseConfig);
 
-const db = getFirestore(appFirebase);
+const db =
+  getFirestore(appFirebase);
 
 /* GLOBAL */
 
@@ -362,13 +324,35 @@ let data = [];
 
 async function load(){
 
-  const snap = await getDoc(
-    doc(db, "itinerary", "main")
-  );
+  try{
 
-  if(snap.exists()){
+    const snap = await getDoc(
+      doc(db,"itinerary","main")
+    );
 
-    data = snap.data().data || [];
+    if(snap.exists()){
+
+      data = snap.data().data || [];
+
+      localStorage.setItem(
+        "itineraryData",
+        JSON.stringify(data)
+      );
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+    const local =
+      localStorage.getItem(
+        "itineraryData"
+      );
+
+    if(local){
+
+      data = JSON.parse(local);
+    }
   }
 
   render();
@@ -378,15 +362,36 @@ async function load(){
 
 async function save(){
 
-  await setDoc(
-
-    doc(db, "itinerary", "main"),
-
-    {
-      data:data
-    }
-
+  localStorage.setItem(
+    "itineraryData",
+    JSON.stringify(data)
   );
+
+  try{
+
+    await setDoc(
+
+      doc(db,"itinerary","main"),
+
+      { data:data }
+
+    );
+
+    console.log("Guardado");
+
+  }catch(err){
+
+    console.log(err);
+  }
+}
+
+/* MANUAL SAVE */
+
+window.manualSave = async function(){
+
+  await save();
+
+  alert("Cambios guardados ✅");
 }
 
 /* ADD DAY */
@@ -398,7 +403,6 @@ window.addDay = function(){
     activities:[]
   });
 
-  save();
   render();
 }
 
@@ -407,11 +411,11 @@ window.addDay = function(){
 window.addActivity = function(d){
 
   data[d].activities.push({
+
     name:"",
     expenses:[]
   });
 
-  save();
   render();
 }
 
@@ -422,11 +426,11 @@ window.addExpense = function(d,a){
   data[d]
   .activities[a]
   .expenses.push({
+
     name:"",
     value:0
   });
 
-  save();
   render();
 }
 
@@ -441,7 +445,10 @@ function calc(day){
       sum +
 
       a.expenses.reduce(
-        (s,e)=>s+(Number(e.value)||0),
+
+        (s,e)=>
+          s+(Number(e.value)||0),
+
         0
       ),
 
@@ -469,10 +476,21 @@ function formatDate(date){
   ];
 
   return `
+
     <div class="fechaTexto">
-      <div>${months[d.getMonth()]}</div>
-      <div>${d.getDate()}</div>
-      <div>${days[d.getDay()]}</div>
+
+      <div>
+        ${months[d.getMonth()]}
+      </div>
+
+      <div>
+        ${d.getDate()}
+      </div>
+
+      <div>
+        ${days[d.getDay()]}
+      </div>
+
     </div>
   `;
 }
@@ -481,7 +499,8 @@ function formatDate(date){
 
 function render(){
 
-  const app = document.getElementById("app");
+  const app =
+    document.getElementById("app");
 
   app.innerHTML = "";
 
@@ -495,167 +514,200 @@ function render(){
 
     app.innerHTML += `
 
-      <tr>
+<tr>
 
-        <td class="dia">
+<td class="dia">
 
-          <input
-            type="date"
-            value="${day.date || ""}"
+<input
+type="date"
+value="${day.date || ""}"
 
-            onchange="
-              data[${di}].date=this.value;
-              save();
-              render();
-            "
-          >
+onchange="
+data[${di}].date=this.value;
 
-          ${formatDate(day.date)}
+localStorage.setItem(
+'itineraryData',
+JSON.stringify(data)
+);
 
-        </td>
+render();
+"
+>
 
-        <td>
+${formatDate(day.date)}
 
-          <button onclick="addActivity(${di})">
-            + Actividad
-          </button>
+</td>
 
-          ${day.activities.map((a,ai)=>`
+<td>
 
-            <div class="block">
+<button onclick="addActivity(${di})">
++ Actividad
+</button>
 
-              <div class="header">
+${day.activities.map((a,ai)=>`
 
-                <input
-                  placeholder="Actividad"
-                  value="${a.name || ""}"
+<div class="block">
 
-                  onchange="
-                    data[${di}]
-                    .activities[${ai}]
-                    .name=this.value;
+<div class="header">
 
-                    save();
-                  "
-                >
+<input
+placeholder="Actividad"
+value="${a.name || ""}"
 
-                <button
-                  class="del"
+onchange="
+data[${di}]
+.activities[${ai}]
+.name=this.value;
 
-                  onclick="
-                    data[${di}]
-                    .activities
-                    .splice(${ai},1);
+localStorage.setItem(
+'itineraryData',
+JSON.stringify(data)
+);
+"
+>
 
-                    save();
-                    render();
-                  "
-                >
-                  ✕
-                </button>
+<button
+class="del"
 
-              </div>
+onclick="
+data[${di}]
+.activities
+.splice(${ai},1);
 
-              ${a.expenses.map((e,ei)=>`
+localStorage.setItem(
+'itineraryData',
+JSON.stringify(data)
+);
 
-                <div class="exp-row">
+render();
+"
+>
 
-                  <div class="exp-name">
+✕
 
-                    <input
-                      placeholder="gasto"
-                      value="${e.name || ""}"
+</button>
 
-                      onchange="
-                        data[${di}]
-                        .activities[${ai}]
-                        .expenses[${ei}]
-                        .name=this.value;
+</div>
 
-                        save();
-                      "
-                    >
+${a.expenses.map((e,ei)=>`
 
-                  </div>
+<div class="exp-row">
 
-                  <div class="exp-value">
+<div class="exp-name">
 
-                    <input
-                      type="number"
-                      value="${e.value || 0}"
+<input
+placeholder="gasto"
+value="${e.name || ""}"
 
-                      onchange="
-                        data[${di}]
-                        .activities[${ai}]
-                        .expenses[${ei}]
-                        .value=this.value;
+onchange="
+data[${di}]
+.activities[${ai}]
+.expenses[${ei}]
+.name=this.value;
 
-                        save();
-                        render();
-                      "
-                    >
+localStorage.setItem(
+'itineraryData',
+JSON.stringify(data)
+);
+"
+>
 
-                  </div>
+</div>
 
-                  <button
-                    class="del"
+<div class="exp-value">
 
-                    onclick="
-                      data[${di}]
-                      .activities[${ai}]
-                      .expenses
-                      .splice(${ei},1);
+<input
+type="number"
+value="${e.value || 0}"
 
-                      save();
-                      render();
-                    "
-                  >
-                    ✕
-                  </button>
+onchange="
+data[${di}]
+.activities[${ai}]
+.expenses[${ei}]
+.value=this.value;
 
-                </div>
+localStorage.setItem(
+'itineraryData',
+JSON.stringify(data)
+);
 
-              `).join("")}
+render();
+"
+>
 
-              <button onclick="addExpense(${di},${ai})">
-                + gasto
-              </button>
+</div>
 
-            </div>
+<button
+class="del"
 
-          `).join("")}
+onclick="
+data[${di}]
+.activities[${ai}]
+.expenses
+.splice(${ei},1);
 
-        </td>
+localStorage.setItem(
+'itineraryData',
+JSON.stringify(data)
+);
 
-        <td class="totalBox">
-          CAD $${total.toFixed(2)}
-        </td>
+render();
+"
+>
 
-        <td class="totalBox">
-          MXN $${(total * RATE).toFixed(2)}
-        </td>
+✕
 
-      </tr>
+</button>
 
-    `;
+</div>
+
+`).join("")}
+
+<button onclick="addExpense(${di},${ai})">
++ gasto
+</button>
+
+</div>
+
+`).join("")}
+
+</td>
+
+<td class="totalBox">
+CAD $${total.toFixed(2)}
+</td>
+
+<td class="totalBox">
+MXN $${(total * RATE).toFixed(2)}
+</td>
+
+</tr>
+
+`;
   });
 
-  document.getElementById("grandCAD").textContent =
+  document.getElementById(
+    "grandCAD"
+  ).textContent =
     grandTotalCAD.toFixed(2);
 
-  document.getElementById("grandMXN").textContent =
-    (grandTotalCAD * RATE).toFixed(2);
+  document.getElementById(
+    "grandMXN"
+  ).textContent =
+    (grandTotalCAD * RATE)
+    .toFixed(2);
 }
 
 /* CLEAR */
 
-window.clearAll = function(){
+window.clearAll = async function(){
 
-  if(confirm("¿Borrar todo el itinerario?")){
+  if(confirm("¿Borrar todo?")){
 
     data = [];
 
-    save();
+    await save();
+
     render();
   }
 }
@@ -664,42 +716,56 @@ window.clearAll = function(){
 
 window.downloadPDF = function(){
 
-  const element = document.getElementById("pdfArea");
-
-  const opt = {
-
-    margin: 0.4,
-
-    filename: 'itinerario.pdf',
-
-    image: {
-      type: 'jpeg',
-      quality: 1
-    },
-
-    html2canvas: {
-      scale: 2,
-      useCORS: true
-    },
-
-    jsPDF: {
-      unit: 'in',
-      format: 'letter',
-      orientation: 'portrait'
-    }
-  };
+  const element =
+    document.getElementById(
+      "pdfArea"
+    );
 
   html2pdf()
-    .set(opt)
-    .from(element)
-    .save();
+
+  .set({
+
+    margin:0.4,
+
+    filename:'itinerario.pdf',
+
+    image:{
+      type:'jpeg',
+      quality:1
+    },
+
+    html2canvas:{
+      scale:2,
+      useCORS:true
+    },
+
+    jsPDF:{
+      unit:'in',
+      format:'letter',
+      orientation:'portrait'
+    }
+  })
+
+  .from(element)
+
+  .save();
 }
+
+/* AUTO SAVE */
+
+setInterval(()=>{
+
+  save();
+
+},30000);
 
 /* PWA */
 
-if ("serviceWorker" in navigator) {
+if("serviceWorker" in navigator){
 
-  navigator.serviceWorker.register("sw.js");
+  navigator
+  .serviceWorker
+  .register("sw.js");
 }
 
 /* START */
@@ -707,8 +773,8 @@ if ("serviceWorker" in navigator) {
 load();
 
 window.data = data;
-window.save = save;
 window.render = render;
+window.save = save;
 
 </script>
 
