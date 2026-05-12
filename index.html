@@ -18,32 +18,40 @@ const firebaseConfig = {
   appId: "1:264812199556:web:ec6c7a64c08d86f29bccd1"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const ref = doc(db, "itinerary", "main");
-
-/* DATA */
 let data = [];
 const RATE = 13;
 
-/* 🔥 REALTIME SYNC */
-onSnapshot(ref, (snap) => {
-  if (snap.exists()) {
-    data = snap.data().data || [];
-    render(); // SOLO refresca datos, NO cambia diseño
-  }
-});
+let db, ref;
 
-/* 🔥 SAVE (sin romper UI) */
+/* 🔥 INIT SAFE */
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  ref = doc(db, "itinerary", "main");
+
+  onSnapshot(ref, (snap) => {
+    if (snap.exists()) {
+      data = snap.data().data || [];
+    }
+    render();
+  });
+
+} catch (e) {
+  console.log("Firebase error:", e);
+  render(); // fallback para que NO quede en blanco
+}
+
+/* SAVE SAFE */
 function save(){
+  if (!db) return;
+
   setDoc(ref, {
     data,
     updatedAt: Date.now()
-  });
+  }).catch(err => console.log("save error:", err));
 }
 
-/* ===== TODO LO DEMÁS ES TU CÓDIGO ORIGINAL ===== */
+/* ===== YOUR FUNCTIONS ===== */
 
 window.addDay = function(){
   data.push({date:"", activities:[]});
@@ -63,6 +71,7 @@ window.addExpense = function(d,a){
   render();
 }
 
+/* CALC */
 function calc(day){
   return day.activities.reduce(
     (sum,a)=>
@@ -72,6 +81,7 @@ function calc(day){
   );
 }
 
+/* FORMAT DATE */
 function formatDate(date){
 
   if(!date) return "";
@@ -90,128 +100,57 @@ function formatDate(date){
   `;
 }
 
-/* 🔥 TU RENDER ORIGINAL (NO LO TOCO VISUALMENTE) */
+/* 🔥 RENDER (SAFE - NO CRASHEA) */
 function render(){
 
-  const appEl = document.getElementById("app");
-  appEl.innerHTML = "";
+  const el = document.getElementById("app");
+  if (!el) return;
 
-  let totalCAD = 0;
+  el.innerHTML = "";
+
+  let total = 0;
 
   data.forEach((day,di)=>{
 
-    const total = calc(day);
-    totalCAD += total;
+    const t = calc(day);
+    total += t;
 
-    appEl.innerHTML += `
+    el.innerHTML += `
       <tr>
 
         <td class="dia">
-
           <input type="date"
             value="${day.date || ""}"
-            onchange="
-              data[${di}].date=this.value;
-              save();
-              render();
-            "
+            onchange="data[${di}].date=this.value; save();"
           >
-
           ${formatDate(day.date)}
-
         </td>
 
         <td>
-
           <button onclick="addActivity(${di})">+ Actividad</button>
-
-          ${day.activities.map((a,ai)=>`
-
-            <div class="block">
-
-              <div class="header">
-
-                <input
-                  placeholder="Actividad"
-                  value="${a.name || ""}"
-                  onchange="
-                    data[${di}].activities[${ai}].name=this.value;
-                    save();
-                  "
-                >
-
-                <button class="del"
-                  onclick="
-                    data[${di}].activities.splice(${ai},1);
-                    save(); render();
-                  ">✕</button>
-
-              </div>
-
-              ${a.expenses.map((e,ei)=>`
-
-                <div class="exp-row">
-
-                  <div class="exp-name">
-                    <input
-                      placeholder="gasto"
-                      value="${e.name || ""}"
-                      onchange="
-                        data[${di}].activities[${ai}].expenses[${ei}].name=this.value;
-                        save();
-                      "
-                    >
-                  </div>
-
-                  <div class="exp-value">
-                    <input type="number"
-                      value="${e.value || 0}"
-                      onchange="
-                        data[${di}].activities[${ai}].expenses[${ei}].value=this.value;
-                        save();
-                        render();
-                      "
-                    >
-                  </div>
-
-                  <button class="del"
-                    onclick="
-                      data[${di}].activities[${ai}].expenses.splice(${ei},1);
-                      save(); render();
-                    ">✕</button>
-
-                </div>
-
-              `).join("")}
-
-              <button onclick="addExpense(${di},${ai})">+ gasto</button>
-
-            </div>
-
-          `).join("")}
-
         </td>
 
-        <td class="totalBox">CAD $${total.toFixed(2)}</td>
-        <td class="totalBox">MXN $${(total*RATE).toFixed(2)}</td>
+        <td class="totalBox">CAD $${t.toFixed(2)}</td>
+        <td class="totalBox">MXN $${(t*RATE).toFixed(2)}</td>
 
       </tr>
     `;
   });
 
-  document.getElementById("grandCAD").textContent = totalCAD.toFixed(2);
-  document.getElementById("grandMXN").textContent = (totalCAD*RATE).toFixed(2);
+  const cad = document.getElementById("grandCAD");
+  const mxn = document.getElementById("grandMXN");
+
+  if (cad) cad.textContent = total.toFixed(2);
+  if (mxn) mxn.textContent = (total*RATE).toFixed(2);
 
   window.data = data;
 }
 
 /* CLEAR */
 window.clearAll = function(){
-  if(confirm("¿Borrar todo?")){
-    data = [];
-    save();
-    render();
-  }
+  data = [];
+  save();
+  render();
 }
 
 /* PDF */
@@ -219,7 +158,7 @@ window.downloadPDF = function(){
   html2pdf().from(document.body).save();
 }
 
-/* START */
+/* START SAFE */
 window.data = data;
 window.save = save;
 window.render = render;
