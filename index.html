@@ -7,23 +7,18 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f1115">
-
 <style>
-/* ====== TU CSS SIN CAMBIOS ====== */
-
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #0f1115;
-  color: #e6e6e6;
-  padding: 20px;
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  background:#0f1115;
+  color:white;
+  padding:20px;
 }
 
 .topbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
 
-button {
+button{
   background:#1f2937;
   color:white;
   border:1px solid #2d3748;
@@ -33,15 +28,21 @@ button {
   font-weight:600;
 }
 
-button:hover{transform:translateY(-1px);background:#273244;}
+table{width:100%;border-spacing:10px;margin-top:10px;}
 
-table{width:100%;border-collapse:separate;border-spacing:10px;margin-top:15px;}
+td,th{
+  background:#111827;
+  padding:12px;
+  border-radius:12px;
+}
 
-th{text-align:center;font-weight:800;padding:14px;border-radius:14px;background:#111827;border:1px solid #2d333b;}
-
-td{padding:14px;border-radius:14px;background:#111827;border:1px solid rgba(76,201,240,0.25);vertical-align:top;}
-
-input{width:100%;background:transparent;border:none;color:white;outline:none;}
+input{
+  width:100%;
+  background:transparent;
+  border:none;
+  color:white;
+  outline:none;
+}
 </style>
 </head>
 
@@ -74,10 +75,10 @@ import {
   getFirestore,
   doc,
   setDoc,
-  getDoc
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* ===== FIREBASE REAL ===== */
+/* 🔥 FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyCXKiui1-tSBvn9k2kagulXQY77v6EhSQM",
   authDomain: "snooks-aad12.firebaseapp.com",
@@ -87,90 +88,91 @@ const firebaseConfig = {
   appId: "1:264812199556:web:ec6c7a64c08d86f29bccd1"
 };
 
-const appFirebase = initializeApp(firebaseConfig);
-const db = getFirestore(appFirebase);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-/* ===== DATA ===== */
+/* DATA */
 let data = [];
 const RATE = 13;
 
-/* ===== LOAD ===== */
-async function load(){
-  const snap = await getDoc(doc(db, "itinerary", "main"));
-  if(snap.exists()){
-    data = snap.data().data || [];
-  }
-  render();
-}
+/* 🔥 REALTIME SYNC (lo más importante) */
+const docRef = doc(db, "itinerary", "main");
 
-/* ===== SAVE (SYNC REAL) ===== */
-async function save(){
-  await setDoc(doc(db, "itinerary", "main"), {
+onSnapshot(docRef, (snap) => {
+  if (snap.exists()) {
+    data = snap.data().data || [];
+    render();
+  }
+});
+
+/* 🔥 SAVE (autosave real) */
+function save(){
+  setDoc(docRef, {
     data,
     updatedAt: Date.now()
   });
 }
 
-/* ===== ACTIONS ===== */
+/* ACTIONS */
 window.addDay = function(){
-  data.push({date:"", activities:[]});
-  save(); render();
+  data.push({date:"",activities:[]});
+  save();
+  render();
 }
 
 window.clearAll = function(){
   if(confirm("¿Borrar todo?")){
     data = [];
-    save(); render();
+    save();
+    render();
   }
 }
 
-/* ===== CALC ===== */
+/* CALC */
 function calc(day){
-  return day.activities.reduce((sum,a)=>
-    sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0)
+  return day.activities.reduce((s,a)=>
+    s + a.expenses.reduce((e,x)=>e+(+x.value||0),0)
   ,0);
 }
 
-/* ===== RENDER ===== */
+/* RENDER */
 function render(){
   const app = document.getElementById("app");
   app.innerHTML = "";
 
-  let totalCAD = 0;
-
   data.forEach((day,di)=>{
+
     const total = calc(day);
-    totalCAD += total;
 
     app.innerHTML += `
       <tr>
         <td>
           <input type="date"
-            value="${day.date || ""}"
-            onchange="data[${di}].date=this.value; save();"
+            value="${day.date||""}"
+            oninput="data[${di}].date=this.value; save();"
           >
         </td>
 
         <td>
-          <button onclick="addActivity(${di})">+ Actividad</button>
+          <button onclick="addActivity(${di})">+ actividad</button>
 
           ${day.activities.map((a,ai)=>`
             <div>
-              <input placeholder="Actividad"
-                value="${a.name || ""}"
-                onchange="data[${di}].activities[${ai}].name=this.value; save();"
+              <input placeholder="actividad"
+                value="${a.name||""}"
+                oninput="data[${di}].activities[${ai}].name=this.value; save();"
               >
 
               ${a.expenses.map((e,ei)=>`
                 <div>
-                  <input placeholder="Gasto"
-                    value="${e.name || ""}"
-                    onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save();"
+                  <input placeholder="gasto"
+                    value="${e.name||""}"
+                    oninput="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save();"
                   >
 
                   <input type="number"
-                    value="${e.value || 0}"
-                    onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save(); render();"
+                    value="${e.value||0}"
+                    oninput="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save();"
                   >
                 </div>
               `).join("")}
@@ -189,25 +191,25 @@ function render(){
   window.data = data;
 }
 
-/* ===== ADD FUNCTIONS ===== */
+/* ADD */
 window.addActivity = function(d){
-  data[d].activities.push({name:"", expenses:[]});
-  save(); render();
+  data[d].activities.push({name:"",expenses:[]});
+  save();
+  render();
 }
 
 window.addExpense = function(d,a){
-  data[d].activities[a].expenses.push({name:"", value:0});
-  save(); render();
+  data[d].activities[a].expenses.push({name:"",value:0});
+  save();
+  render();
 }
 
-/* ===== PDF ===== */
+/* PDF */
 window.downloadPDF = function(){
   html2pdf().from(document.body).save();
 }
 
-/* ===== START ===== */
-load();
-
+/* START */
 window.data = data;
 window.save = save;
 window.render = render;
