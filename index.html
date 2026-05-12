@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
+
 <title>Itinerario Blue Pink</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <link rel="manifest" href="manifest.json">
+
 <meta name="theme-color" content="#0f1115">
 
 <style>
@@ -79,42 +84,6 @@ td {
   text-align: center;
   color-scheme: dark;
   font-size: 15px;
-}
-
-.dia input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.95;
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(77%)
-    sepia(32%)
-    saturate(2400%)
-    hue-rotate(185deg)
-    brightness(115%)
-    contrast(105%)
-    drop-shadow(0 0 4px rgba(76,201,240,0.8))
-    drop-shadow(0 0 8px rgba(247,37,133,0.55));
-
-  transition: 0.25s ease;
-}
-
-.dia input::-webkit-calendar-picker-indicator:hover {
-
-  transform: scale(1.08);
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(79%)
-    sepia(45%)
-    saturate(2600%)
-    hue-rotate(190deg)
-    brightness(125%)
-    contrast(110%)
-    drop-shadow(0 0 6px rgba(76,201,240,1))
-    drop-shadow(0 0 12px rgba(247,37,133,0.9));
 }
 
 .fechaTexto {
@@ -212,7 +181,6 @@ input {
     rgba(247,37,133,0.10)
   );
   border: 1px solid rgba(247,37,133,0.25);
-  backdrop-filter: blur(8px);
 }
 
 .grandTitle{
@@ -265,14 +233,19 @@ input {
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="topbar">
+
   <button onclick="addDay()">➕ Día</button>
+
   <button onclick="downloadPDF()">📄 Descargar PDF</button>
+
   <button onclick="clearAll()">🗑️ Limpiar</button>
+
 </div>
 
 <div id="pdfArea">
@@ -280,12 +253,19 @@ input {
 <table>
 
 <thead>
+
 <tr>
+
 <th>Día</th>
+
 <th>Actividades</th>
+
 <th>CAD</th>
+
 <th>MXN</th>
+
 </tr>
+
 </thead>
 
 <tbody id="app"></tbody>
@@ -295,21 +275,33 @@ input {
 <div class="grandTotal">
 
   <div class="grandTitle">
+
     💰 Total General
+
   </div>
 
   <div class="grandRow">
+
     <div class="grandLabel">Total CAD</div>
+
     <div class="grandValue">
+
       $<span id="grandCAD">0.00</span>
+
     </div>
+
   </div>
 
   <div class="grandRow">
+
     <div class="grandLabel">Total MXN</div>
+
     <div class="grandValue">
+
       $<span id="grandMXN">0.00</span>
+
     </div>
+
   </div>
 
 </div>
@@ -321,36 +313,54 @@ input {
 <script type="module">
 
 import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
 import {
+
   getFirestore,
   doc,
   setDoc,
-  getDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  onSnapshot,
+  enableIndexedDbPersistence
 
-/* FIREBASE CONFIG */
+}
+
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+
+/* FIREBASE */
 
 const firebaseConfig = {
 
-  apiKey: "TU_API_KEY",
+  apiKey: "AIzaSyBEkmNLTcNj5u2XR90Y38nacxJYA2_uvsQ",
 
-  authDomain: "TU_PROJECT.firebaseapp.com",
+  authDomain: "itinerario-bluepink.firebaseapp.com",
 
-  projectId: "TU_PROJECT",
+  projectId: "itinerario-bluepink",
 
-  storageBucket: "TU_PROJECT.appspot.com",
+  storageBucket: "itinerario-bluepink.firebasestorage.app",
 
-  messagingSenderId: "XXXX",
+  messagingSenderId: "411796393279",
 
-  appId: "XXXX"
+  appId: "1:411796393279:web:5c898918f5a8c8a391978a"
 };
 
 const appFirebase = initializeApp(firebaseConfig);
 
 const db = getFirestore(appFirebase);
+
+
+/* OFFLINE */
+
+enableIndexedDbPersistence(db)
+
+.catch((err)=>{
+
+  console.log(err);
+
+});
+
 
 /* GLOBAL */
 
@@ -358,21 +368,47 @@ const RATE = 13;
 
 let data = [];
 
-/* LOAD */
 
-async function load(){
+/* AUTOSAVE */
 
-  const snap = await getDoc(
-    doc(db, "itinerary", "main")
-  );
+let saveTimeout;
 
-  if(snap.exists()){
+function autoSave(){
 
-    data = snap.data().data || [];
-  }
+  clearTimeout(saveTimeout);
 
-  render();
+  saveTimeout = setTimeout(()=>{
+
+    save();
+
+  }, 400);
 }
+
+
+/* REALTIME */
+
+function load(){
+
+  onSnapshot(
+
+    doc(db, "itinerary", "main"),
+
+    (snap)=>{
+
+      if(snap.exists()){
+
+        data = snap.data().data || [];
+
+      } else {
+
+        data = [];
+      }
+
+      render();
+    }
+  );
+}
+
 
 /* SAVE */
 
@@ -389,31 +425,40 @@ async function save(){
   );
 }
 
+
 /* ADD DAY */
 
 window.addDay = function(){
 
   data.push({
+
     date:"",
     activities:[]
+
   });
 
-  save();
+  autoSave();
+
   render();
 }
+
 
 /* ADD ACTIVITY */
 
 window.addActivity = function(d){
 
   data[d].activities.push({
+
     name:"",
     expenses:[]
+
   });
 
-  save();
+  autoSave();
+
   render();
 }
+
 
 /* ADD EXPENSE */
 
@@ -422,13 +467,17 @@ window.addExpense = function(d,a){
   data[d]
   .activities[a]
   .expenses.push({
+
     name:"",
     value:0
+
   });
 
-  save();
+  autoSave();
+
   render();
 }
+
 
 /* CALC */
 
@@ -441,7 +490,9 @@ function calc(day){
       sum +
 
       a.expenses.reduce(
+
         (s,e)=>s+(Number(e.value)||0),
+
         0
       ),
 
@@ -449,7 +500,8 @@ function calc(day){
   );
 }
 
-/* FORMAT DATE */
+
+/* DATE */
 
 function formatDate(date){
 
@@ -458,24 +510,35 @@ function formatDate(date){
   const d = new Date(date);
 
   const days = [
+
     'dom','lun','mar',
     'mié','jue','vie','sáb'
+
   ];
 
   const months = [
+
     'ene','feb','mar','abr',
     'may','jun','jul','ago',
     'sep','oct','nov','dic'
+
   ];
 
   return `
+
     <div class="fechaTexto">
+
       <div>${months[d.getMonth()]}</div>
+
       <div>${d.getDate()}</div>
+
       <div>${days[d.getDay()]}</div>
+
     </div>
+
   `;
 }
+
 
 /* RENDER */
 
@@ -504,9 +567,13 @@ function render(){
             value="${day.date || ""}"
 
             onchange="
+
               data[${di}].date=this.value;
-              save();
+
+              autoSave();
+
               render();
+
             "
           >
 
@@ -517,7 +584,9 @@ function render(){
         <td>
 
           <button onclick="addActivity(${di})">
+
             + Actividad
+
           </button>
 
           ${day.activities.map((a,ai)=>`
@@ -531,11 +600,13 @@ function render(){
                   value="${a.name || ""}"
 
                   onchange="
+
                     data[${di}]
                     .activities[${ai}]
                     .name=this.value;
 
-                    save();
+                    autoSave();
+
                   "
                 >
 
@@ -543,12 +614,15 @@ function render(){
                   class="del"
 
                   onclick="
+
                     data[${di}]
                     .activities
                     .splice(${ai},1);
 
-                    save();
+                    autoSave();
+
                     render();
+
                   "
                 >
                   ✕
@@ -567,12 +641,14 @@ function render(){
                       value="${e.name || ""}"
 
                       onchange="
+
                         data[${di}]
                         .activities[${ai}]
                         .expenses[${ei}]
                         .name=this.value;
 
-                        save();
+                        autoSave();
+
                       "
                     >
 
@@ -585,13 +661,16 @@ function render(){
                       value="${e.value || 0}"
 
                       onchange="
+
                         data[${di}]
                         .activities[${ai}]
                         .expenses[${ei}]
                         .value=this.value;
 
-                        save();
+                        autoSave();
+
                         render();
+
                       "
                     >
 
@@ -601,13 +680,16 @@ function render(){
                     class="del"
 
                     onclick="
+
                       data[${di}]
                       .activities[${ai}]
                       .expenses
                       .splice(${ei},1);
 
-                      save();
+                      autoSave();
+
                       render();
+
                     "
                   >
                     ✕
@@ -618,7 +700,9 @@ function render(){
               `).join("")}
 
               <button onclick="addExpense(${di},${ai})">
+
                 + gasto
+
               </button>
 
             </div>
@@ -628,11 +712,15 @@ function render(){
         </td>
 
         <td class="totalBox">
+
           CAD $${total.toFixed(2)}
+
         </td>
 
         <td class="totalBox">
+
           MXN $${(total * RATE).toFixed(2)}
+
         </td>
 
       </tr>
@@ -641,11 +729,14 @@ function render(){
   });
 
   document.getElementById("grandCAD").textContent =
+
     grandTotalCAD.toFixed(2);
 
   document.getElementById("grandMXN").textContent =
+
     (grandTotalCAD * RATE).toFixed(2);
 }
+
 
 /* CLEAR */
 
@@ -655,10 +746,12 @@ window.clearAll = function(){
 
     data = [];
 
-    save();
+    autoSave();
+
     render();
   }
 }
+
 
 /* PDF */
 
@@ -668,32 +761,42 @@ window.downloadPDF = function(){
 
   const opt = {
 
-    margin: 0.4,
+    margin:0.4,
 
-    filename: 'itinerario.pdf',
+    filename:'itinerario.pdf',
 
-    image: {
-      type: 'jpeg',
-      quality: 1
+    image:{
+
+      type:'jpeg',
+      quality:1
+
     },
 
-    html2canvas: {
-      scale: 2,
-      useCORS: true
+    html2canvas:{
+
+      scale:2,
+      useCORS:true
+
     },
 
-    jsPDF: {
-      unit: 'in',
-      format: 'letter',
-      orientation: 'portrait'
+    jsPDF:{
+
+      unit:'in',
+      format:'letter',
+      orientation:'portrait'
+
     }
   };
 
   html2pdf()
+
     .set(opt)
+
     .from(element)
+
     .save();
 }
+
 
 /* PWA */
 
@@ -702,15 +805,13 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
 
+
 /* START */
 
 load();
 
-window.data = data;
-window.save = save;
-window.render = render;
-
 </script>
 
 </body>
+
 </html>
