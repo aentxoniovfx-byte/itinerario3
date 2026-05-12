@@ -1,73 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Itinerario Blue Pink</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-body{
-  margin:0;
-  font-family:Inter,sans-serif;
-  background:#0f1115;
-  color:white;
-  padding:20px;
-}
-
-.topbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-
-button{
-  background:#1f2937;
-  color:white;
-  border:1px solid #2d3748;
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-table{width:100%;border-spacing:10px;margin-top:10px;}
-
-td,th{
-  background:#111827;
-  padding:12px;
-  border-radius:12px;
-}
-
-input{
-  width:100%;
-  background:transparent;
-  border:none;
-  color:white;
-  outline:none;
-}
-</style>
-</head>
-
-<body>
-
-<div class="topbar">
-  <button onclick="addDay()">➕ Día</button>
-  <button onclick="downloadPDF()">📄 PDF</button>
-  <button onclick="clearAll()">🗑️ Limpiar</button>
-</div>
-
-<table>
-<thead>
-<tr>
-<th>Día</th>
-<th>Actividades</th>
-<th>CAD</th>
-<th>MXN</th>
-</tr>
-</thead>
-<tbody id="app"></tbody>
-</table>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -78,7 +8,7 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔥 FIREBASE */
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyCXKiui1-tSBvn9k2kagulXQY77v6EhSQM",
   authDomain: "snooks-aad12.firebaseapp.com",
@@ -91,21 +21,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const docRef = doc(db, "itinerary", "main");
+
 /* DATA */
 let data = [];
 const RATE = 13;
 
-/* 🔥 REALTIME SYNC (lo más importante) */
-const docRef = doc(db, "itinerary", "main");
-
+/* 🔥 REALTIME SYNC (NO rompe UI) */
 onSnapshot(docRef, (snap) => {
   if (snap.exists()) {
     data = snap.data().data || [];
-    render();
+    render(); // SOLO refresca datos, NO toca diseño
   }
 });
 
-/* 🔥 SAVE (autosave real) */
+/* 🔥 SAVE (silencioso, sin render duplicado) */
 function save(){
   setDoc(docRef, {
     data,
@@ -113,95 +43,178 @@ function save(){
   });
 }
 
-/* ACTIONS */
+/* ADD DAY */
 window.addDay = function(){
-  data.push({date:"",activities:[]});
+  data.push({date:"", activities:[]});
   save();
   render();
 }
 
-window.clearAll = function(){
-  if(confirm("¿Borrar todo?")){
-    data = [];
-    save();
-    render();
-  }
+/* ADD ACTIVITY */
+window.addActivity = function(d){
+  data[d].activities.push({name:"", expenses:[]});
+  save();
+  render();
 }
 
-/* CALC */
+/* ADD EXPENSE */
+window.addExpense = function(d,a){
+  data[d].activities[a].expenses.push({name:"", value:0});
+  save();
+  render();
+}
+
+/* CALC (igual que tu versión) */
 function calc(day){
-  return day.activities.reduce((s,a)=>
-    s + a.expenses.reduce((e,x)=>e+(+x.value||0),0)
-  ,0);
+  return day.activities.reduce(
+    (sum,a)=>
+      sum + a.expenses.reduce(
+        (s,e)=>s+(Number(e.value)||0),0
+      ),0
+  );
 }
 
-/* RENDER */
+/* FORMAT DATE (igual) */
+function formatDate(date){
+
+  if(!date) return "";
+
+  const d = new Date(date);
+
+  const days = ['dom','lun','mar','mié','jue','vie','sáb'];
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  return `
+    <div class="fechaTexto">
+      <div>${months[d.getMonth()]}</div>
+      <div>${d.getDate()}</div>
+      <div>${days[d.getDay()]}</div>
+    </div>
+  `;
+}
+
+/* 🔥 RENDER (NO TOCAMOS TU DISEÑO) */
 function render(){
-  const app = document.getElementById("app");
-  app.innerHTML = "";
+
+  const appEl = document.getElementById("app");
+  appEl.innerHTML = "";
+
+  let grandTotalCAD = 0;
 
   data.forEach((day,di)=>{
 
     const total = calc(day);
+    grandTotalCAD += total;
 
-    app.innerHTML += `
+    appEl.innerHTML += `
       <tr>
-        <td>
+
+        <td class="dia">
+
           <input type="date"
-            value="${day.date||""}"
-            oninput="data[${di}].date=this.value; save();"
+            value="${day.date || ""}"
+            onchange="
+              data[${di}].date=this.value;
+              save();
+              render();
+            "
           >
+
+          ${formatDate(day.date)}
+
         </td>
 
         <td>
-          <button onclick="addActivity(${di})">+ actividad</button>
+
+          <button onclick="addActivity(${di})">+ Actividad</button>
 
           ${day.activities.map((a,ai)=>`
-            <div>
-              <input placeholder="actividad"
-                value="${a.name||""}"
-                oninput="data[${di}].activities[${ai}].name=this.value; save();"
-              >
+
+            <div class="block">
+
+              <div class="header">
+
+                <input
+                  placeholder="Actividad"
+                  value="${a.name || ""}"
+                  onchange="
+                    data[${di}].activities[${ai}].name=this.value;
+                    save();
+                  "
+                >
+
+                <button class="del"
+                  onclick="
+                    data[${di}].activities.splice(${ai},1);
+                    save(); render();
+                  ">✕</button>
+
+              </div>
 
               ${a.expenses.map((e,ei)=>`
-                <div>
-                  <input placeholder="gasto"
-                    value="${e.name||""}"
-                    oninput="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save();"
-                  >
 
-                  <input type="number"
-                    value="${e.value||0}"
-                    oninput="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save();"
-                  >
+                <div class="exp-row">
+
+                  <div class="exp-name">
+                    <input
+                      placeholder="gasto"
+                      value="${e.name || ""}"
+                      onchange="
+                        data[${di}].activities[${ai}].expenses[${ei}].name=this.value;
+                        save();
+                      "
+                    >
+                  </div>
+
+                  <div class="exp-value">
+                    <input type="number"
+                      value="${e.value || 0}"
+                      onchange="
+                        data[${di}].activities[${ai}].expenses[${ei}].value=this.value;
+                        save();
+                        render();
+                      "
+                    >
+                  </div>
+
+                  <button class="del"
+                    onclick="
+                      data[${di}].activities[${ai}].expenses.splice(${ei},1);
+                      save(); render();
+                    ">✕</button>
+
                 </div>
+
               `).join("")}
 
               <button onclick="addExpense(${di},${ai})">+ gasto</button>
+
             </div>
+
           `).join("")}
+
         </td>
 
-        <td>$${total.toFixed(2)}</td>
-        <td>$${(total*RATE).toFixed(2)}</td>
+        <td class="totalBox">CAD $${total.toFixed(2)}</td>
+        <td class="totalBox">MXN $${(total*RATE).toFixed(2)}</td>
+
       </tr>
     `;
   });
 
+  document.getElementById("grandCAD").textContent = grandTotalCAD.toFixed(2);
+  document.getElementById("grandMXN").textContent = (grandTotalCAD*RATE).toFixed(2);
+
   window.data = data;
 }
 
-/* ADD */
-window.addActivity = function(d){
-  data[d].activities.push({name:"",expenses:[]});
-  save();
-  render();
-}
-
-window.addExpense = function(d,a){
-  data[d].activities[a].expenses.push({name:"",value:0});
-  save();
-  render();
+/* CLEAR */
+window.clearAll = function(){
+  if(confirm("¿Borrar todo el itinerario?")){
+    data = [];
+    save();
+    render();
+  }
 }
 
 /* PDF */
@@ -214,7 +227,6 @@ window.data = data;
 window.save = save;
 window.render = render;
 
-</script>
+render();
 
-</body>
-</html>
+</script>
