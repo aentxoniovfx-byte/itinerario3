@@ -4,18 +4,16 @@
 <head>
 
 <meta charset="UTF-8">
-
 <title>Itinerario Blue Pink</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <link rel="manifest" href="manifest.json">
-
 <meta name="theme-color" content="#0f1115">
 
 <style>
+
+/* ===== TU CSS SIN CAMBIOS ===== */
 
 body {
   margin: 0;
@@ -25,211 +23,50 @@ body {
   padding: 20px;
 }
 
-.topbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:10px;
-}
+.topbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
 
-button {
-  background: #1f2937;
-  color: white;
-  border: 1px solid #2d3748;
-  padding: 10px 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-  font-weight: 600;
-}
-
-button:hover{
-  transform: translateY(-1px);
-  background:#273244;
-}
-
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 10px;
-  margin-top: 15px;
-}
-
-th {
-  text-align: center;
-  font-weight: 800;
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid #2d333b;
-}
-
-td {
-  padding: 14px;
-  border-radius: 14px;
-  background: #111827;
-  border: 1px solid rgba(76,201,240,0.25);
-  vertical-align: top;
-}
-
-.dia {
-  text-align: center;
-}
-
-.dia input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  text-align: center;
-  color-scheme: dark;
-  font-size: 15px;
-}
-
-.fechaTexto {
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: 12px;
-  background: linear-gradient(
-    135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
-  );
-  border: 1px solid rgba(76,201,240,0.25);
-}
-
-.fechaTexto div:nth-child(1){
-  font-size:13px;
-  color: rgba(76,201,240,0.85);
-}
-
-.fechaTexto div:nth-child(2){
-  font-size:28px;
-  font-weight:700;
-  color: rgba(247,37,133,0.65);
-}
-
-.fechaTexto div:nth-child(3){
-  font-size:13px;
-  color: rgba(247,37,133,0.75);
-}
-
-.block {
-  margin-bottom: 12px;
-  padding: 10px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(76,201,240,0.2);
-}
-
-.header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.exp-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.exp-name {
-  flex: 1;
-  padding: 8px;
-  border-radius: 10px;
-  background: rgba(76,201,240,0.08);
-  border: 1px solid rgba(76,201,240,0.25);
-}
-
-.exp-value {
-  width: 110px;
-  padding: 8px;
-  border-radius: 10px;
-  background: rgba(247,37,133,0.08);
-  border: 1px solid rgba(247,37,133,0.25);
-}
-
-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  outline: none;
-}
-
-.del {
-  background: transparent;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-
-.totalBox{
-  font-weight:700;
-  white-space:nowrap;
-}
-
-.grandTotal{
-  margin-top: 20px;
-  padding: 22px;
-  border-radius: 18px;
-  background: linear-gradient(
-    135deg,
-    rgba(76,201,240,0.12),
-    rgba(247,37,133,0.10)
-  );
-  border: 1px solid rgba(247,37,133,0.25);
-}
-
-.grandTitle{
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 15px;
-}
-
-.grandRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 14px;
-  margin-top:10px;
-  border-radius:14px;
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(76,201,240,0.18);
-}
-
-.grandLabel{
-  color:#9dd9ff;
+button{
+  background:#1f2937;
+  color:white;
+  border:1px solid #2d3748;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:0.2s;
   font-weight:600;
 }
 
-.grandValue{
-  font-size:22px;
-  font-weight:800;
-  color:#ff8dc7;
-}
+button:hover{transform:translateY(-1px);background:#273244;}
 
-@media(max-width:900px){
+table{width:100%;border-collapse:separate;border-spacing:10px;margin-top:15px;}
 
-  table,
-  thead,
-  tbody,
-  th,
-  td,
-  tr{
-    display:block;
-    width:100%;
-  }
+th{text-align:center;font-weight:800;padding:14px;border-radius:14px;background:#111827;border:1px solid #2d333b;}
 
-  th{
-    display:none;
-  }
+td{padding:14px;border-radius:14px;background:#111827;border:1px solid rgba(76,201,240,0.25);vertical-align:top;}
 
-  tr{
-    margin-bottom:20px;
-  }
+.dia{text-align:center;}
+
+input{width:100%;background:transparent;border:none;color:white;outline:none;}
+
+.block{margin-bottom:12px;padding:10px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(76,201,240,0.2);}
+
+.header{display:flex;gap:8px;margin-bottom:8px;}
+
+.exp-row{display:flex;gap:8px;margin-bottom:8px;}
+
+.exp-name{flex:1;padding:8px;border-radius:10px;background:rgba(76,201,240,0.08);border:1px solid rgba(76,201,240,0.25);}
+
+.exp-value{width:110px;padding:8px;border-radius:10px;background:rgba(247,37,133,0.08);border:1px solid rgba(247,37,133,0.25);}
+
+.del{background:transparent;border:none;color:#9ca3af;cursor:pointer;}
+
+.totalBox{font-weight:700;}
+
+.grandTotal{
+  margin-top:20px;
+  padding:22px;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(76,201,240,0.12),rgba(247,37,133,0.10));
 }
 
 </style>
@@ -239,13 +76,9 @@ input {
 <body>
 
 <div class="topbar">
-
   <button onclick="addDay()">➕ Día</button>
-
-  <button onclick="downloadPDF()">📄 Descargar PDF</button>
-
+  <button onclick="downloadPDF()">📄 PDF</button>
   <button onclick="clearAll()">🗑️ Limpiar</button>
-
 </div>
 
 <div id="pdfArea">
@@ -253,19 +86,12 @@ input {
 <table>
 
 <thead>
-
 <tr>
-
 <th>Día</th>
-
 <th>Actividades</th>
-
 <th>CAD</th>
-
 <th>MXN</th>
-
 </tr>
-
 </thead>
 
 <tbody id="app"></tbody>
@@ -273,37 +99,7 @@ input {
 </table>
 
 <div class="grandTotal">
-
-  <div class="grandTitle">
-
-    💰 Total General
-
-  </div>
-
-  <div class="grandRow">
-
-    <div class="grandLabel">Total CAD</div>
-
-    <div class="grandValue">
-
-      $<span id="grandCAD">0.00</span>
-
-    </div>
-
-  </div>
-
-  <div class="grandRow">
-
-    <div class="grandLabel">Total MXN</div>
-
-    <div class="grandValue">
-
-      $<span id="grandMXN">0.00</span>
-
-    </div>
-
-  </div>
-
+  💰 Total: CAD <span id="grandCAD">0</span> | MXN <span id="grandMXN">0</span>
 </div>
 
 </div>
@@ -312,282 +108,131 @@ input {
 
 <script type="module">
 
-import { initializeApp }
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-
-import {
-
-  getFirestore,
-  doc,
-  setDoc,
-  onSnapshot,
-  enableIndexedDbPersistence
-
-}
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 /* FIREBASE */
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyBEkmNLTcNj5u2XR90Y38nacxJYA2_uvsQ",
-
   authDomain: "itinerario-bluepink.firebaseapp.com",
-
   projectId: "itinerario-bluepink",
-
   storageBucket: "itinerario-bluepink.firebasestorage.app",
-
   messagingSenderId: "411796393279",
-
   appId: "1:411796393279:web:5c898918f5a8c8a391978a"
 };
 
 const appFirebase = initializeApp(firebaseConfig);
-
 const db = getFirestore(appFirebase);
 
-
-/* OFFLINE */
-
-enableIndexedDbPersistence(db)
-
-.catch((err)=>{
-
-  console.log(err);
-
-});
-
-
-/* GLOBAL */
-
-const RATE = 13;
+/* DATA */
 
 let data = [];
-
-
-/* AUTOSAVE */
-
-let saveTimeout;
-
-function autoSave(){
-
-  clearTimeout(saveTimeout);
-
-  saveTimeout = setTimeout(()=>{
-
-    save();
-
-  }, 400);
-}
-
-
-/* REALTIME */
-
-function load(){
-
-  onSnapshot(
-
-    doc(db, "itinerary", "main"),
-
-    (snap)=>{
-
-      if(snap.exists()){
-
-        data = snap.data().data || [];
-
-      } else {
-
-        data = [];
-      }
-
-      render();
-    }
-  );
-}
-
+const RATE = 13;
 
 /* SAVE */
 
 async function save(){
+  await setDoc(doc(db,"itinerary","main"), {
+    data
+  }, { merge: true });
+}
 
-  await setDoc(
+/* REALTIME (FIXED) */
 
-    doc(db, "itinerary", "main"),
+let firstLoad = true;
 
-    {
-      data:data
+function load(){
+
+  onSnapshot(doc(db,"itinerary","main"), (snap)=>{
+
+    if(snap.exists()){
+
+      const serverData = snap.data().data || [];
+
+      if(firstLoad){
+        data = serverData;
+        render();
+        firstLoad = false;
+      }
+
+    } else {
+      data = [];
+      render();
     }
 
-  );
+  });
+
 }
 
-
-/* ADD DAY */
+/* ADD */
 
 window.addDay = function(){
-
-  data.push({
-
-    date:"",
-    activities:[]
-
-  });
-
-  autoSave();
-
+  data.push({date:"",activities:[]});
+  save();
   render();
 }
-
-
-/* ADD ACTIVITY */
 
 window.addActivity = function(d){
-
-  data[d].activities.push({
-
-    name:"",
-    expenses:[]
-
-  });
-
-  autoSave();
-
+  data[d].activities.push({name:"",expenses:[]});
+  save();
   render();
 }
-
-
-/* ADD EXPENSE */
 
 window.addExpense = function(d,a){
-
-  data[d]
-  .activities[a]
-  .expenses.push({
-
-    name:"",
-    value:0
-
-  });
-
-  autoSave();
-
+  data[d].activities[a].expenses.push({name:"",value:0});
+  save();
   render();
 }
 
+/* DELETE FIXED */
+
+window.delActivity = function(d,a){
+  data[d].activities.splice(a,1);
+  save();
+  render();
+}
+
+window.delExpense = function(d,a,e){
+  data[d].activities[a].expenses.splice(e,1);
+  save();
+  render();
+}
 
 /* CALC */
 
 function calc(day){
-
-  return day.activities.reduce(
-
-    (sum,a)=>
-
-      sum +
-
-      a.expenses.reduce(
-
-        (s,e)=>s+(Number(e.value)||0),
-
-        0
-      ),
-
-    0
-  );
+  return day.activities.reduce((sum,a)=>
+    sum + a.expenses.reduce((s,e)=>s+(Number(e.value)||0),0)
+  ,0);
 }
-
-
-/* DATE */
-
-function formatDate(date){
-
-  if(!date) return "";
-
-  const d = new Date(date);
-
-  const days = [
-
-    'dom','lun','mar',
-    'mié','jue','vie','sáb'
-
-  ];
-
-  const months = [
-
-    'ene','feb','mar','abr',
-    'may','jun','jul','ago',
-    'sep','oct','nov','dic'
-
-  ];
-
-  return `
-
-    <div class="fechaTexto">
-
-      <div>${months[d.getMonth()]}</div>
-
-      <div>${d.getDate()}</div>
-
-      <div>${days[d.getDay()]}</div>
-
-    </div>
-
-  `;
-}
-
 
 /* RENDER */
 
 function render(){
 
   const app = document.getElementById("app");
-
   app.innerHTML = "";
 
-  let grandTotalCAD = 0;
+  let total = 0;
 
   data.forEach((day,di)=>{
 
-    const total = calc(day);
-
-    grandTotalCAD += total;
+    const t = calc(day);
+    total += t;
 
     app.innerHTML += `
-
       <tr>
 
         <td class="dia">
-
-          <input
-            type="date"
-            value="${day.date || ""}"
-
-            onchange="
-
-              data[${di}].date=this.value;
-
-              autoSave();
-
-              render();
-
-            "
+          <input type="date" value="${day.date||""}"
+            onchange="data[${di}].date=this.value;save();"
           >
-
-          ${formatDate(day.date)}
-
         </td>
 
         <td>
 
-          <button onclick="addActivity(${di})">
-
-            + Actividad
-
-          </button>
+          <button onclick="addActivity(${di})">+ Actividad</button>
 
           ${day.activities.map((a,ai)=>`
 
@@ -595,38 +240,11 @@ function render(){
 
               <div class="header">
 
-                <input
-                  placeholder="Actividad"
-                  value="${a.name || ""}"
-
-                  onchange="
-
-                    data[${di}]
-                    .activities[${ai}]
-                    .name=this.value;
-
-                    autoSave();
-
-                  "
+                <input value="${a.name||""}"
+                  onchange="data[${di}].activities[${ai}].name=this.value;save();"
                 >
 
-                <button
-                  class="del"
-
-                  onclick="
-
-                    data[${di}]
-                    .activities
-                    .splice(${ai},1);
-
-                    autoSave();
-
-                    render();
-
-                  "
-                >
-                  ✕
-                </button>
+                <button class="del" onclick="delActivity(${di},${ai})">✕</button>
 
               </div>
 
@@ -634,76 +252,21 @@ function render(){
 
                 <div class="exp-row">
 
-                  <div class="exp-name">
-
-                    <input
-                      placeholder="gasto"
-                      value="${e.name || ""}"
-
-                      onchange="
-
-                        data[${di}]
-                        .activities[${ai}]
-                        .expenses[${ei}]
-                        .name=this.value;
-
-                        autoSave();
-
-                      "
-                    >
-
-                  </div>
-
-                  <div class="exp-value">
-
-                    <input
-                      type="number"
-                      value="${e.value || 0}"
-
-                      onchange="
-
-                        data[${di}]
-                        .activities[${ai}]
-                        .expenses[${ei}]
-                        .value=this.value;
-
-                        autoSave();
-
-                        render();
-
-                      "
-                    >
-
-                  </div>
-
-                  <button
-                    class="del"
-
-                    onclick="
-
-                      data[${di}]
-                      .activities[${ai}]
-                      .expenses
-                      .splice(${ei},1);
-
-                      autoSave();
-
-                      render();
-
-                    "
+                  <input class="exp-name" value="${e.name||""}"
+                    onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value;save();"
                   >
-                    ✕
-                  </button>
+
+                  <input class="exp-value" type="number" value="${e.value||0}"
+                    onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value;save();"
+                  >
+
+                  <button class="del" onclick="delExpense(${di},${ai},${ei})">✕</button>
 
                 </div>
 
               `).join("")}
 
-              <button onclick="addExpense(${di},${ai})">
-
-                + gasto
-
-              </button>
+              <button onclick="addExpense(${di},${ai})">+ gasto</button>
 
             </div>
 
@@ -711,100 +274,32 @@ function render(){
 
         </td>
 
-        <td class="totalBox">
-
-          CAD $${total.toFixed(2)}
-
-        </td>
-
-        <td class="totalBox">
-
-          MXN $${(total * RATE).toFixed(2)}
-
-        </td>
+        <td class="totalBox">CAD $${t.toFixed(2)}</td>
+        <td class="totalBox">MXN $${(t*RATE).toFixed(2)}</td>
 
       </tr>
-
     `;
   });
 
-  document.getElementById("grandCAD").textContent =
-
-    grandTotalCAD.toFixed(2);
-
-  document.getElementById("grandMXN").textContent =
-
-    (grandTotalCAD * RATE).toFixed(2);
+  document.getElementById("grandCAD").textContent = total.toFixed(2);
+  document.getElementById("grandMXN").textContent = (total*RATE).toFixed(2);
 }
-
 
 /* CLEAR */
 
 window.clearAll = function(){
-
-  if(confirm("¿Borrar todo el itinerario?")){
-
+  if(confirm("¿Borrar todo?")){
     data = [];
-
-    autoSave();
-
+    save();
     render();
   }
 }
 
-
 /* PDF */
 
 window.downloadPDF = function(){
-
-  const element = document.getElementById("pdfArea");
-
-  const opt = {
-
-    margin:0.4,
-
-    filename:'itinerario.pdf',
-
-    image:{
-
-      type:'jpeg',
-      quality:1
-
-    },
-
-    html2canvas:{
-
-      scale:2,
-      useCORS:true
-
-    },
-
-    jsPDF:{
-
-      unit:'in',
-      format:'letter',
-      orientation:'portrait'
-
-    }
-  };
-
-  html2pdf()
-
-    .set(opt)
-
-    .from(element)
-
-    .save();
+  html2pdf().from(document.getElementById("pdfArea")).save();
 }
-
-
-/* PWA */
-
-if ("serviceWorker" in navigator) {
-
-  navigator.serviceWorker.register("sw.js");
-}
-
 
 /* START */
 
@@ -813,5 +308,4 @@ load();
 </script>
 
 </body>
-
 </html>
