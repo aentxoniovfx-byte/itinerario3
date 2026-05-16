@@ -7,6 +7,8 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
 body {
   margin: 0;
@@ -16,14 +18,25 @@ body {
   padding: 20px;
 }
 
+.topbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
 button {
   background: #1f2937;
   color: white;
   border: 1px solid #2d3748;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 12px;
   cursor: pointer;
-  margin: 5px;
+  font-weight: 600;
+}
+
+button:hover {
+  background:#273244;
 }
 
 table {
@@ -33,26 +46,30 @@ table {
   margin-top: 15px;
 }
 
-th, td {
+th {
+  text-align: center;
+  font-weight: 800;
+  padding: 14px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid #2d333b;
+}
+
+td {
+  padding: 14px;
+  border-radius: 14px;
   background: #111827;
   border: 1px solid rgba(76,201,240,0.25);
-  border-radius: 12px;
-  padding: 12px;
+  vertical-align: top;
 }
 
-.dia input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: white;
-  text-align: center;
-}
-
+/* GLASS BLOCK */
 .block {
   margin-top: 10px;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(76,201,240,0.2);
 }
 
 .row {
@@ -63,7 +80,7 @@ th, td {
 
 .row input {
   flex: 1;
-  padding: 6px;
+  padding: 8px;
   border-radius: 8px;
   background: rgba(255,255,255,0.05);
   border: none;
@@ -74,31 +91,39 @@ th, td {
   width: 90px;
 }
 
-/* TOTAL BOX */
+input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  outline: none;
+}
+
+/* TOTAL SOLO ABAJO */
 .totalBox {
-  margin-top: 15px;
-  padding: 15px;
-  border-radius: 12px;
-  background: linear-gradient(135deg,
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
     rgba(76,201,240,0.12),
     rgba(247,37,133,0.10)
   );
   border: 1px solid rgba(76,201,240,0.25);
-  font-weight: 700;
+  font-weight: 800;
 }
-
 </style>
 </head>
 
 <body>
 
-<button onclick="addDay()">➕ Día</button>
-
-<div class="totalBox">
-  💰 Total General:
-  CAD $<span id="totalCAD">0</span> |
-  MXN $<span id="totalMXN">0</span>
+<div class="topbar">
+  <button onclick="addDay()">➕ Día</button>
+  <button onclick="downloadPDF()">📄 PDF</button>
+  <button onclick="clearAll()">🗑️ Limpiar</button>
 </div>
+
+<div id="pdfArea">
 
 <table>
 <thead>
@@ -113,10 +138,13 @@ th, td {
 <tbody id="app"></tbody>
 </table>
 
+</div>
+
+<!-- SOLO TOTAL FINAL -->
 <div class="totalBox">
   💰 Total General:
-  CAD $<span id="totalCAD2">0</span> |
-  MXN $<span id="totalMXN2">0</span>
+  CAD $<span id="cadTotal">0</span> |
+  MXN $<span id="mxnTotal">0</span>
 </div>
 
 <script>
@@ -146,7 +174,6 @@ function addExpense(d,a){
   render();
 }
 
-/* TOTAL CALC */
 function calc(day){
   let total = 0;
   day.activities.forEach(a=>{
@@ -157,22 +184,7 @@ function calc(day){
   return total;
 }
 
-function updateTotals(){
-
-  let cad = 0;
-
-  data.forEach(d=>{
-    cad += calc(d);
-  });
-
-  document.getElementById("totalCAD").innerText = cad.toFixed(2);
-  document.getElementById("totalMXN").innerText = (cad*RATE).toFixed(2);
-
-  document.getElementById("totalCAD2").innerText = cad.toFixed(2);
-  document.getElementById("totalMXN2").innerText = (cad*RATE).toFixed(2);
-}
-
-/* INPUT BIND */
+/* INPUT SAFE */
 function bindInputs(){
 
   document.querySelectorAll("[data-type]").forEach(el=>{
@@ -183,13 +195,25 @@ function bindInputs(){
 
       if(type==="day") data[di].date = el.value;
       if(type==="activity") data[di].activities[ai].name = el.value;
-      if(type==="expense-name") data[di].activities[ai].expenses[ei].name = el.value;
-      if(type==="expense-value") data[di].activities[ai].expenses[ei].value = Number(el.value)||0;
+      if(type==="expn") data[di].activities[ai].expenses[ei].name = el.value;
+      if(type==="expv") data[di].activities[ai].expenses[ei].value = Number(el.value)||0;
 
       save();
       updateTotals();
     };
   });
+}
+
+function updateTotals(){
+
+  let cad = 0;
+
+  data.forEach(d=>{
+    cad += calc(d);
+  });
+
+  document.getElementById("cadTotal").innerText = cad.toFixed(2);
+  document.getElementById("mxnTotal").innerText = (cad*RATE).toFixed(2);
 }
 
 function render(){
@@ -200,7 +224,6 @@ function render(){
   data.forEach((day,di)=>{
 
     let total = calc(day);
-
     let html = "";
 
     day.activities.forEach((a,ai)=>{
@@ -210,68 +233,84 @@ function render(){
       a.expenses.forEach((e,ei)=>{
 
         exp += `
-          <div class="row">
+        <div class="row">
 
-            <input data-type="expense-name"
-              data-di="${di}" data-ai="${ai}" data-ei="${ei}"
-              value="${e.name || ""}" placeholder="gasto">
+          <input data-type="expn"
+            data-di="${di}" data-ai="${ai}" data-ei="${ei}"
+            value="${e.name||""}" placeholder="gasto">
 
-            <input data-type="expense-value"
-              type="number"
-              data-di="${di}" data-ai="${ai}" data-ei="${ei}"
-              value="${e.value || 0}" class="small">
+          <input data-type="expv"
+            type="number"
+            data-di="${di}" data-ai="${ai}" data-ei="${ei}"
+            value="${e.value||0}" class="small">
 
-            <button onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1);save();render()">✕</button>
+          <button onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1);save();render()">✕</button>
 
-          </div>
-        `;
+        </div>`;
       });
 
       html += `
-        <div class="block">
+      <div class="block">
 
-          <div class="row">
+        <div class="row">
 
-            <input data-type="activity"
-              data-di="${di}" data-ai="${ai}"
-              value="${a.name || ""}" placeholder="actividad">
+          <input data-type="activity"
+            data-di="${di}" data-ai="${ai}"
+            value="${a.name||""}" placeholder="actividad">
 
-            <button onclick="data[${di}].activities.splice(${ai},1);save();render()">✕</button>
-
-          </div>
-
-          ${exp}
-
-          <button onclick="addExpense(${di},${ai})">+ gasto</button>
+          <button onclick="data[${di}].activities.splice(${ai},1);save();render()">✕</button>
 
         </div>
-      `;
+
+        ${exp}
+
+        <button onclick="addExpense(${di},${ai})">+ gasto</button>
+
+      </div>`;
     });
 
     app.innerHTML += `
-      <tr>
+    <tr>
 
-        <td class="dia">
-          <input data-type="day"
-            data-di="${di}"
-            type="date"
-            value="${day.date || ""}">
-        </td>
+      <td>
+        <input data-type="day"
+          data-di="${di}"
+          type="date"
+          value="${day.date||""}">
+      </td>
 
-        <td>
-          <button onclick="addActivity(${di})">+ actividad</button>
-          ${html}
-        </td>
+      <td>
+        <button onclick="addActivity(${di})">+ actividad</button>
+        ${html}
+      </td>
 
-        <td>CAD $${total.toFixed(2)}</td>
-        <td>MXN $${(total*RATE).toFixed(2)}</td>
+      <td>CAD $${total.toFixed(2)}</td>
+      <td>MXN $${(total*RATE).toFixed(2)}</td>
 
-      </tr>
-    `;
+    </tr>`;
   });
 
   bindInputs();
   updateTotals();
+}
+
+/* PDF */
+function downloadPDF(){
+  html2pdf().from(document.getElementById("pdfArea")).set({
+    margin:0.4,
+    filename:"itinerario.pdf",
+    image:{type:"jpeg",quality:1},
+    html2canvas:{scale:2},
+    jsPDF:{unit:"in",format:"letter"}
+  }).save();
+}
+
+function clearAll(){
+  if(confirm("¿Borrar todo?")){
+    data = [];
+    save();
+    render();
+  }
 }
 
 render();
