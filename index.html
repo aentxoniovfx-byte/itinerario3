@@ -7,22 +7,22 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<meta name="theme-color" content="#0f1115">
 
 <style>
 body {
   margin: 0;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   background: #0f1115;
   color: #e6e6e6;
   padding: 20px;
 }
 
-.topbar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
+.topbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
 }
 
 button {
@@ -35,7 +35,7 @@ button {
   font-weight: 600;
 }
 
-button:hover {
+button:hover{
   background:#273244;
 }
 
@@ -63,76 +63,116 @@ td {
   vertical-align: top;
 }
 
-/* 📅 DATE FIX */
-input[type="date"] {
+/* CALENDARIO */
+.dia input{
+  width:100%;
+  background:transparent;
+  border:none;
+  color:white;
+  text-align:center;
   color-scheme: dark;
-  color: white;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  cursor: pointer;
+/* FECHA VISUAL */
+.fechaTexto {
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    rgba(76,201,240,0.12),
+    rgba(247,37,133,0.10)
+  );
+  border: 1px solid rgba(76,201,240,0.25);
 }
 
-/* GLASS BLOCK */
+.fechaTexto div:nth-child(1){ color:#4cc9f0; font-size:13px;}
+.fechaTexto div:nth-child(2){ color:#f72585; font-size:28px; font-weight:700;}
+.fechaTexto div:nth-child(3){ color:#ff8dc7; font-size:13px;}
+
+/* BLOQUE ACTIVIDAD */
 .block {
-  margin-top: 10px;
+  margin-bottom: 12px;
   padding: 10px;
   border-radius: 12px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(76,201,240,0.2);
 }
 
-.row {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
+.header {
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
 }
 
-.row input {
-  flex: 1;
-  padding: 8px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  border: none;
-  color: white;
-  outline: none;
+.header input{
+  flex:1;
+  background: rgba(76,201,240,0.08);
+  border:1px solid rgba(76,201,240,0.25);
+  border-radius:10px;
+  padding:8px;
+  color:white;
 }
 
-.small {
-  width: 90px;
+/* EXPENSE ROW */
+.exp-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
 }
 
-/* 🎨 COLORES RESTAURADOS */
-.expense-name {
-  background: rgba(76,201,240,0.18); /* azul */
+/* NOMBRE GASTO (rosa) */
+.exp-name input{
+  width:100%;
+  padding:8px;
+  border-radius:10px;
+  background: rgba(247,37,133,0.10);
+  border:1px solid rgba(247,37,133,0.25);
+  color:white;
 }
 
-.expense-value {
-  background: rgba(247,37,133,0.18); /* rosa */
+/* VALOR (AZUL) */
+.exp-value input{
+  width:90px;
+  padding:8px;
+  border-radius:10px;
+  background: rgba(76,201,240,0.10);
+  border:1px solid rgba(76,201,240,0.25);
+  color:white;
+}
+
+.del{
+  background:transparent;
+  border:none;
+  color:#9ca3af;
+  cursor:pointer;
 }
 
 /* TOTAL */
-.totalBox {
-  margin-top: 20px;
-  padding: 16px;
-  border-radius: 14px;
-  background: linear-gradient(
-    135deg,
+.totalBox{
+  font-weight:700;
+  white-space:nowrap;
+  color:#4cc9f0;
+}
+
+.totalBox:last-child{
+  color:#f72585;
+}
+
+.grandTotal{
+  margin-top:20px;
+  padding:22px;
+  border-radius:18px;
+  background: linear-gradient(135deg,
     rgba(76,201,240,0.12),
     rgba(247,37,133,0.10)
   );
-  border: 1px solid rgba(76,201,240,0.25);
-  font-weight: 800;
+  border:1px solid rgba(247,37,133,0.25);
 }
 
-/* DELETE */
-.del {
-  background: transparent;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-}
+.grandTitle{ font-weight:800; margin-bottom:10px; }
+.grandRow{ display:flex; justify-content:space-between; margin-top:10px;}
+.grandValue{ font-weight:800; color:#f72585; }
+
 </style>
 </head>
 
@@ -155,20 +195,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 <th>MXN</th>
 </tr>
 </thead>
-
 <tbody id="app"></tbody>
 </table>
 
+<!-- SOLO UN TOTAL -->
+<div class="grandTotal">
+  <div class="grandTitle">💰 Total</div>
+  <div class="grandRow">
+    <div>CAD</div>
+    <div class="grandValue" id="grandCAD">$0</div>
+  </div>
+  <div class="grandRow">
+    <div>MXN</div>
+    <div class="grandValue" id="grandMXN">$0</div>
+  </div>
 </div>
 
-<div class="totalBox">
-  💰 Total General:
-  CAD $<span id="cadTotal">0</span> |
-  MXN $<span id="mxnTotal">0</span>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
-
 const RATE = 13;
 let data = JSON.parse(localStorage.getItem("trip_app")) || [];
 
@@ -177,173 +224,115 @@ function save(){
 }
 
 function addDay(){
-  data.push({date:"",activities:[]});
-  save();
-  render();
+  data.push({date:"", activities:[]});
+  save(); render();
 }
 
 function addActivity(d){
-  data[d].activities.push({name:"",expenses:[]});
-  save();
-  render();
+  data[d].activities.push({name:"", expenses:[]});
+  save(); render();
 }
 
 function addExpense(d,a){
-  data[d].activities[a].expenses.push({name:"",value:0});
-  save();
-  render();
+  data[d].activities[a].expenses.push({name:"", value:0});
+  save(); render();
 }
 
 function calc(day){
-  let total = 0;
-  day.activities.forEach(a=>{
-    a.expenses.forEach(e=>{
-      total += Number(e.value)||0;
-    });
-  });
-  return total;
+  return day.activities.reduce((s,a)=>
+    s + a.expenses.reduce((x,e)=>x+(Number(e.value)||0),0),0);
 }
 
-/* SAFE INPUTS */
-function bindInputs(){
+function formatDate(date){
+  if(!date) return "";
+  const d=new Date(date);
+  const days=['dom','lun','mar','mié','jue','vie','sáb'];
+  const months=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 
-  document.querySelectorAll("[data-type]").forEach(el=>{
-
-    el.oninput = () => {
-
-      const {type,di,ai,ei} = el.dataset;
-
-      if(type==="day") data[di].date = el.value;
-      if(type==="activity") data[di].activities[ai].name = el.value;
-      if(type==="expn") data[di].activities[ai].expenses[ei].name = el.value;
-      if(type==="expv") data[di].activities[ai].expenses[ei].value = Number(el.value)||0;
-
-      save();
-      updateTotals();
-    };
-  });
-}
-
-function updateTotals(){
-
-  let cad = 0;
-
-  data.forEach(d=>{
-    cad += calc(d);
-  });
-
-  document.getElementById("cadTotal").innerText = cad.toFixed(2);
-  document.getElementById("mxnTotal").innerText = (cad*RATE).toFixed(2);
+  return `
+  <div class="fechaTexto">
+    <div>${months[d.getMonth()]}</div>
+    <div>${d.getDate()}</div>
+    <div>${days[d.getDay()]}</div>
+  </div>`;
 }
 
 function render(){
-
   const app = document.getElementById("app");
   app.innerHTML = "";
 
+  let totalCAD = 0;
+
   data.forEach((day,di)=>{
-
-    let total = calc(day);
-    let html = "";
-
-    day.activities.forEach((a,ai)=>{
-
-      let exp = "";
-
-      a.expenses.forEach((e,ei)=>{
-
-        exp += `
-        <div class="row">
-
-          <input class="expense-name"
-            data-type="expn"
-            data-di="${di}" data-ai="${ai}" data-ei="${ei}"
-            value="${e.name||""}" placeholder="gasto">
-
-          <input class="expense-value"
-            data-type="expv"
-            type="number"
-            data-di="${di}" data-ai="${ai}" data-ei="${ei}"
-            value="${e.value||0}" class="small">
-
-          <button class="del"
-          onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1);save();render()">✕</button>
-
-        </div>`;
-      });
-
-      html += `
-      <div class="block">
-
-        <div class="row">
-
-          <input data-type="activity"
-            data-di="${di}" data-ai="${ai}"
-            value="${a.name||""}" placeholder="actividad">
-
-          <button class="del"
-          onclick="data[${di}].activities.splice(${ai},1);save();render()">✕</button>
-
-        </div>
-
-        ${exp}
-
-        <button onclick="addExpense(${di},${ai})">+ gasto</button>
-
-      </div>`;
-    });
+    const total = calc(day);
+    totalCAD += total;
 
     app.innerHTML += `
-    <tr>
+<tr>
+<td>
+<input type="date" value="${day.date||""}"
+onchange="data[${di}].date=this.value; save(); render()">
+${formatDate(day.date||"")}
+</td>
 
-      <td>
-        <input data-type="day"
-          data-di="${di}"
-          type="date"
-          value="${day.date||""}">
-      </td>
+<td>
+<button onclick="addActivity(${di})">+ Actividad</button>
 
-      <td>
-        <button onclick="addActivity(${di})">+ actividad</button>
-        ${html}
-      </td>
+${day.activities.map((a,ai)=>`
+<div class="block">
 
-      <td style="color:#4cc9f0;font-weight:700">
-        CAD $${total.toFixed(2)}
-      </td>
+<div class="header">
+<input value="${a.name||""}"
+onchange="data[${di}].activities[${ai}].name=this.value; save()">
+<button class="del"
+onclick="data[${di}].activities.splice(${ai},1); save(); render()">✕</button>
+</div>
 
-      <td style="color:#f72585;font-weight:700">
-        MXN $${(total*RATE).toFixed(2)}
-      </td>
+${a.expenses.map((e,ei)=>`
+<div class="exp-row">
+<div class="exp-name">
+<input value="${e.name||""}"
+onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()">
+</div>
 
-    </tr>`;
+<div class="exp-value">
+<input type="number" value="${e.value||0}"
+onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save(); render()">
+</div>
+
+<button class="del"
+onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()">✕</button>
+</div>
+`).join("")}
+
+<button onclick="addExpense(${di},${ai})">+ gasto</button>
+
+</div>
+`).join("")}
+
+</td>
+
+<td class="totalBox">CAD $${total.toFixed(2)}</td>
+<td class="totalBox">MXN $${(total*RATE).toFixed(2)}</td>
+</tr>`;
   });
 
-  bindInputs();
-  updateTotals();
-}
-
-/* PDF */
-function downloadPDF(){
-  html2pdf().from(document.getElementById("pdfArea")).set({
-    margin:0.4,
-    filename:"itinerario.pdf",
-    image:{type:"jpeg",quality:1},
-    html2canvas:{scale:2},
-    jsPDF:{unit:"in",format:"letter"}
-  }).save();
+  document.getElementById("grandCAD").textContent = "$"+totalCAD.toFixed(2);
+  document.getElementById("grandMXN").textContent = "$"+(totalCAD*RATE).toFixed(2);
 }
 
 function clearAll(){
-  if(confirm("¿Borrar todo?")){
-    data = [];
-    save();
-    render();
+  if(confirm("Borrar todo?")){
+    data=[];
+    save(); render();
   }
 }
 
-render();
+function downloadPDF(){
+  html2pdf().from(document.getElementById("pdfArea")).save("itinerario.pdf");
+}
 
+render();
 </script>
 
 </body>
