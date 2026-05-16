@@ -2,17 +2,11 @@
 
 const RATE = 13;
 
-/* =========================
-   LOCAL STORAGE
-========================= */
-
 let data = JSON.parse(
   localStorage.getItem("trip_app")
 ) || [];
 
-/* =========================
-   SAVE
-========================= */
+/* SAVE */
 
 function save(){
 
@@ -22,9 +16,7 @@ function save(){
   );
 }
 
-/* =========================
-   ADD DAY
-========================= */
+/* ADD DAY */
 
 function addDay(){
 
@@ -37,9 +29,7 @@ function addDay(){
   render();
 }
 
-/* =========================
-   ADD ACTIVITY
-========================= */
+/* ADD ACTIVITY */
 
 function addActivity(d){
 
@@ -52,9 +42,7 @@ function addActivity(d){
   render();
 }
 
-/* =========================
-   ADD EXPENSE
-========================= */
+/* ADD EXPENSE */
 
 function addExpense(d,a){
 
@@ -69,9 +57,7 @@ function addExpense(d,a){
   render();
 }
 
-/* =========================
-   CALCULATE
-========================= */
+/* CALC */
 
 function calc(day){
 
@@ -90,9 +76,7 @@ function calc(day){
   );
 }
 
-/* =========================
-   FORMAT DATE
-========================= */
+/* DATE */
 
 function formatDate(date){
 
@@ -120,9 +104,7 @@ function formatDate(date){
   `;
 }
 
-/* =========================
-   RENDER
-========================= */
+/* RENDER */
 
 function render(){
 
@@ -143,7 +125,6 @@ function render(){
           <input
             type="date"
             value="${day.date || ""}"
-
             onchange="
               data[${di}].date=this.value;
               save();
@@ -170,24 +151,19 @@ function render(){
                 <input
                   placeholder="Actividad"
                   value="${a.name || ""}"
-
                   onchange="
                     data[${di}]
                     .activities[${ai}]
                     .name=this.value;
-
                     save();
                   "
                 >
 
                 <button
                   class="del"
-
                   onclick="
                     data[${di}]
-                    .activities
-                    .splice(${ai},1);
-
+                    .activities.splice(${ai},1);
                     save();
                     render();
                   "
@@ -206,13 +182,11 @@ function render(){
                     <input
                       placeholder="gasto"
                       value="${e.name || ""}"
-
                       onchange="
                         data[${di}]
                         .activities[${ai}]
                         .expenses[${ei}]
                         .name=this.value;
-
                         save();
                       "
                     >
@@ -224,7 +198,6 @@ function render(){
                     <input
                       type="number"
                       value="${e.value || 0}"
-
                       onchange="
                         data[${di}]
                         .activities[${ai}]
@@ -240,12 +213,10 @@ function render(){
 
                   <button
                     class="del"
-
                     onclick="
                       data[${di}]
                       .activities[${ai}]
-                      .expenses
-                      .splice(${ei},1);
+                      .expenses.splice(${ei},1);
 
                       save();
                       render();
@@ -284,15 +255,11 @@ function render(){
   save();
 }
 
-/* =========================
-   START
-========================= */
+/* START */
 
 render();
 
-/* =========================
-   PWA
-========================= */
+/* PWA */
 
 if ("serviceWorker" in navigator) {
 
