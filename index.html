@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Itinerario Blue Pink</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
 body {
   margin: 0;
@@ -52,7 +63,7 @@ td {
   vertical-align: top;
 }
 
-/* 📅 DATE FIX (para que se vea el número) */
+/* 📅 DATE FIX */
 input[type="date"] {
   color-scheme: dark;
   color: white;
@@ -63,7 +74,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-/* BLOCK */
+/* GLASS BLOCK */
 .block {
   margin-top: 10px;
   padding: 10px;
@@ -85,20 +96,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: rgba(255,255,255,0.05);
   border: none;
   color: white;
+  outline: none;
 }
 
-/* SMALL INPUT */
 .small {
   width: 90px;
 }
 
 /* 🎨 COLORES RESTAURADOS */
 .expense-name {
-  background: rgba(76,201,240,0.15); /* AZUL */
+  background: rgba(76,201,240,0.18); /* azul */
 }
 
 .expense-value {
-  background: rgba(247,37,133,0.15); /* ROSA */
+  background: rgba(247,37,133,0.18); /* rosa */
 }
 
 /* TOTAL */
@@ -115,12 +126,225 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 800;
 }
 
-/* INPUT GLOBAL FIX */
-input {
-  width: 100%;
+/* DELETE */
+.del {
   background: transparent;
   border: none;
-  color: white;
-  outline: none;
+  color: #9ca3af;
+  cursor: pointer;
 }
 </style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <button onclick="addDay()">➕ Día</button>
+  <button onclick="downloadPDF()">📄 PDF</button>
+  <button onclick="clearAll()">🗑️ Limpiar</button>
+</div>
+
+<div id="pdfArea">
+
+<table>
+<thead>
+<tr>
+<th>Día</th>
+<th>Actividades</th>
+<th>CAD</th>
+<th>MXN</th>
+</tr>
+</thead>
+
+<tbody id="app"></tbody>
+</table>
+
+</div>
+
+<div class="totalBox">
+  💰 Total General:
+  CAD $<span id="cadTotal">0</span> |
+  MXN $<span id="mxnTotal">0</span>
+</div>
+
+<script>
+
+const RATE = 13;
+let data = JSON.parse(localStorage.getItem("trip_app")) || [];
+
+function save(){
+  localStorage.setItem("trip_app", JSON.stringify(data));
+}
+
+function addDay(){
+  data.push({date:"",activities:[]});
+  save();
+  render();
+}
+
+function addActivity(d){
+  data[d].activities.push({name:"",expenses:[]});
+  save();
+  render();
+}
+
+function addExpense(d,a){
+  data[d].activities[a].expenses.push({name:"",value:0});
+  save();
+  render();
+}
+
+function calc(day){
+  let total = 0;
+  day.activities.forEach(a=>{
+    a.expenses.forEach(e=>{
+      total += Number(e.value)||0;
+    });
+  });
+  return total;
+}
+
+/* SAFE INPUTS */
+function bindInputs(){
+
+  document.querySelectorAll("[data-type]").forEach(el=>{
+
+    el.oninput = () => {
+
+      const {type,di,ai,ei} = el.dataset;
+
+      if(type==="day") data[di].date = el.value;
+      if(type==="activity") data[di].activities[ai].name = el.value;
+      if(type==="expn") data[di].activities[ai].expenses[ei].name = el.value;
+      if(type==="expv") data[di].activities[ai].expenses[ei].value = Number(el.value)||0;
+
+      save();
+      updateTotals();
+    };
+  });
+}
+
+function updateTotals(){
+
+  let cad = 0;
+
+  data.forEach(d=>{
+    cad += calc(d);
+  });
+
+  document.getElementById("cadTotal").innerText = cad.toFixed(2);
+  document.getElementById("mxnTotal").innerText = (cad*RATE).toFixed(2);
+}
+
+function render(){
+
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  data.forEach((day,di)=>{
+
+    let total = calc(day);
+    let html = "";
+
+    day.activities.forEach((a,ai)=>{
+
+      let exp = "";
+
+      a.expenses.forEach((e,ei)=>{
+
+        exp += `
+        <div class="row">
+
+          <input class="expense-name"
+            data-type="expn"
+            data-di="${di}" data-ai="${ai}" data-ei="${ei}"
+            value="${e.name||""}" placeholder="gasto">
+
+          <input class="expense-value"
+            data-type="expv"
+            type="number"
+            data-di="${di}" data-ai="${ai}" data-ei="${ei}"
+            value="${e.value||0}" class="small">
+
+          <button class="del"
+          onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1);save();render()">✕</button>
+
+        </div>`;
+      });
+
+      html += `
+      <div class="block">
+
+        <div class="row">
+
+          <input data-type="activity"
+            data-di="${di}" data-ai="${ai}"
+            value="${a.name||""}" placeholder="actividad">
+
+          <button class="del"
+          onclick="data[${di}].activities.splice(${ai},1);save();render()">✕</button>
+
+        </div>
+
+        ${exp}
+
+        <button onclick="addExpense(${di},${ai})">+ gasto</button>
+
+      </div>`;
+    });
+
+    app.innerHTML += `
+    <tr>
+
+      <td>
+        <input data-type="day"
+          data-di="${di}"
+          type="date"
+          value="${day.date||""}">
+      </td>
+
+      <td>
+        <button onclick="addActivity(${di})">+ actividad</button>
+        ${html}
+      </td>
+
+      <td style="color:#4cc9f0;font-weight:700">
+        CAD $${total.toFixed(2)}
+      </td>
+
+      <td style="color:#f72585;font-weight:700">
+        MXN $${(total*RATE).toFixed(2)}
+      </td>
+
+    </tr>`;
+  });
+
+  bindInputs();
+  updateTotals();
+}
+
+/* PDF */
+function downloadPDF(){
+  html2pdf().from(document.getElementById("pdfArea")).set({
+    margin:0.4,
+    filename:"itinerario.pdf",
+    image:{type:"jpeg",quality:1},
+    html2canvas:{scale:2},
+    jsPDF:{unit:"in",format:"letter"}
+  }).save();
+}
+
+function clearAll(){
+  if(confirm("¿Borrar todo?")){
+    data = [];
+    save();
+    render();
+  }
+}
+
+render();
+
+</script>
+
+</body>
+</html>
