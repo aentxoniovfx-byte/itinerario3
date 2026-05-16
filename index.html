@@ -74,12 +74,31 @@ th, td {
   width: 90px;
 }
 
+/* TOTAL BOX */
+.totalBox {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+    rgba(76,201,240,0.12),
+    rgba(247,37,133,0.10)
+  );
+  border: 1px solid rgba(76,201,240,0.25);
+  font-weight: 700;
+}
+
 </style>
 </head>
 
 <body>
 
 <button onclick="addDay()">➕ Día</button>
+
+<div class="totalBox">
+  💰 Total General:
+  CAD $<span id="totalCAD">0</span> |
+  MXN $<span id="totalMXN">0</span>
+</div>
 
 <table>
 <thead>
@@ -94,10 +113,15 @@ th, td {
 <tbody id="app"></tbody>
 </table>
 
+<div class="totalBox">
+  💰 Total General:
+  CAD $<span id="totalCAD2">0</span> |
+  MXN $<span id="totalMXN2">0</span>
+</div>
+
 <script>
 
 const RATE = 13;
-
 let data = JSON.parse(localStorage.getItem("trip_app")) || [];
 
 function save(){
@@ -122,6 +146,7 @@ function addExpense(d,a){
   render();
 }
 
+/* TOTAL CALC */
 function calc(day){
   let total = 0;
   day.activities.forEach(a=>{
@@ -132,7 +157,22 @@ function calc(day){
   return total;
 }
 
-/* 🔥 IMPORTANTE: inputs SIN romper escritura */
+function updateTotals(){
+
+  let cad = 0;
+
+  data.forEach(d=>{
+    cad += calc(d);
+  });
+
+  document.getElementById("totalCAD").innerText = cad.toFixed(2);
+  document.getElementById("totalMXN").innerText = (cad*RATE).toFixed(2);
+
+  document.getElementById("totalCAD2").innerText = cad.toFixed(2);
+  document.getElementById("totalMXN2").innerText = (cad*RATE).toFixed(2);
+}
+
+/* INPUT BIND */
 function bindInputs(){
 
   document.querySelectorAll("[data-type]").forEach(el=>{
@@ -141,23 +181,13 @@ function bindInputs(){
 
       const {type,di,ai,ei} = el.dataset;
 
-      if(type==="day"){
-        data[di].date = el.value;
-      }
-
-      if(type==="activity"){
-        data[di].activities[ai].name = el.value;
-      }
-
-      if(type==="expense-name"){
-        data[di].activities[ai].expenses[ei].name = el.value;
-      }
-
-      if(type==="expense-value"){
-        data[di].activities[ai].expenses[ei].value = Number(el.value)||0;
-      }
+      if(type==="day") data[di].date = el.value;
+      if(type==="activity") data[di].activities[ai].name = el.value;
+      if(type==="expense-name") data[di].activities[ai].expenses[ei].name = el.value;
+      if(type==="expense-value") data[di].activities[ai].expenses[ei].value = Number(el.value)||0;
 
       save();
+      updateTotals();
     };
   });
 }
@@ -169,17 +199,17 @@ function render(){
 
   data.forEach((day,di)=>{
 
-    const total = calc(day);
+    let total = calc(day);
 
-    let activitiesHTML = "";
+    let html = "";
 
     day.activities.forEach((a,ai)=>{
 
-      let expensesHTML = "";
+      let exp = "";
 
       a.expenses.forEach((e,ei)=>{
 
-        expensesHTML += `
+        exp += `
           <div class="row">
 
             <input data-type="expense-name"
@@ -197,7 +227,7 @@ function render(){
         `;
       });
 
-      activitiesHTML += `
+      html += `
         <div class="block">
 
           <div class="row">
@@ -210,7 +240,7 @@ function render(){
 
           </div>
 
-          ${expensesHTML}
+          ${exp}
 
           <button onclick="addExpense(${di},${ai})">+ gasto</button>
 
@@ -230,17 +260,18 @@ function render(){
 
         <td>
           <button onclick="addActivity(${di})">+ actividad</button>
-          ${activitiesHTML}
+          ${html}
         </td>
 
         <td>CAD $${total.toFixed(2)}</td>
-        <td>MXN $${(total * RATE).toFixed(2)}</td>
+        <td>MXN $${(total*RATE).toFixed(2)}</td>
 
       </tr>
     `;
   });
 
   bindInputs();
+  updateTotals();
 }
 
 render();
