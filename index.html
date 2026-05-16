@@ -7,8 +7,6 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<meta name="theme-color" content="#0f1115">
-
 <style>
 body {
   margin: 0;
@@ -63,7 +61,7 @@ td {
   vertical-align: top;
 }
 
-/* CALENDARIO */
+/* DATE */
 .dia input{
   width:100%;
   background:transparent;
@@ -89,7 +87,7 @@ td {
 .fechaTexto div:nth-child(2){ color:#f72585; font-size:28px; font-weight:700;}
 .fechaTexto div:nth-child(3){ color:#ff8dc7; font-size:13px;}
 
-/* BLOQUE ACTIVIDAD */
+/* ACTIVIDAD */
 .block {
   margin-bottom: 12px;
   padding: 10px;
@@ -113,14 +111,15 @@ td {
   color:white;
 }
 
-/* EXPENSE ROW */
+/* 🔥 FIX REAL: columnas separadas sin overlap */
 .exp-row{
-  display:flex;
-  gap:8px;
+  display:grid;
+  grid-template-columns: 1fr 120px 40px;
+  gap:10px;
   margin-bottom:8px;
+  align-items:center;
 }
 
-/* NOMBRE GASTO (rosa) */
 .exp-name input{
   width:100%;
   padding:8px;
@@ -128,16 +127,17 @@ td {
   background: rgba(247,37,133,0.10);
   border:1px solid rgba(247,37,133,0.25);
   color:white;
+  box-sizing:border-box;
 }
 
-/* VALOR (AZUL) */
 .exp-value input{
-  width:90px;
+  width:100%;
   padding:8px;
   border-radius:10px;
   background: rgba(76,201,240,0.10);
   border:1px solid rgba(76,201,240,0.25);
   color:white;
+  box-sizing:border-box;
 }
 
 .del{
@@ -158,6 +158,7 @@ td {
   color:#f72585;
 }
 
+/* TOTAL GENERAL */
 .grandTotal{
   margin-top:20px;
   padding:22px;
@@ -195,10 +196,10 @@ td {
 <th>MXN</th>
 </tr>
 </thead>
+
 <tbody id="app"></tbody>
 </table>
 
-<!-- SOLO UN TOTAL -->
 <div class="grandTotal">
   <div class="grandTitle">💰 Total</div>
   <div class="grandRow">
@@ -258,16 +259,16 @@ function formatDate(date){
 }
 
 function render(){
-  const app = document.getElementById("app");
-  app.innerHTML = "";
+  const app=document.getElementById("app");
+  app.innerHTML="";
 
-  let totalCAD = 0;
+  let totalCAD=0;
 
   data.forEach((day,di)=>{
-    const total = calc(day);
-    totalCAD += total;
+    const total=calc(day);
+    totalCAD+=total;
 
-    app.innerHTML += `
+    app.innerHTML+=`
 <tr>
 <td>
 <input type="date" value="${day.date||""}"
@@ -290,6 +291,7 @@ onclick="data[${di}].activities.splice(${ai},1); save(); render()">✕</button>
 
 ${a.expenses.map((e,ei)=>`
 <div class="exp-row">
+
 <div class="exp-name">
 <input value="${e.name||""}"
 onchange="data[${di}].activities[${ai}].expenses[${ei}].name=this.value; save()">
@@ -302,6 +304,7 @@ onchange="data[${di}].activities[${ai}].expenses[${ei}].value=this.value; save()
 
 <button class="del"
 onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render()">✕</button>
+
 </div>
 `).join("")}
 
@@ -312,13 +315,13 @@ onclick="data[${di}].activities[${ai}].expenses.splice(${ei},1); save(); render(
 
 </td>
 
-<td class="totalBox">CAD $${total.toFixed(2)}</td>
-<td class="totalBox">MXN $${(total*RATE).toFixed(2)}</td>
+<td>CAD $${total.toFixed(2)}</td>
+<td>MXN $${(total*RATE).toFixed(2)}</td>
 </tr>`;
   });
 
-  document.getElementById("grandCAD").textContent = "$"+totalCAD.toFixed(2);
-  document.getElementById("grandMXN").textContent = "$"+(totalCAD*RATE).toFixed(2);
+  document.getElementById("grandCAD").textContent="$"+totalCAD.toFixed(2);
+  document.getElementById("grandMXN").textContent="$"+(totalCAD*RATE).toFixed(2);
 }
 
 function clearAll(){
