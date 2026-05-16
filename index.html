@@ -1,17 +1,17 @@
 <script>
 
-/* =========================
-   LOCAL STORAGE (SIN FIREBASE)
-========================= */
-
 const RATE = 13;
+
+/* =========================
+   LOCAL STORAGE
+========================= */
 
 let data = JSON.parse(
   localStorage.getItem("trip_app")
 ) || [];
 
 /* =========================
-   SAVE LOCAL
+   SAVE
 ========================= */
 
 function save(){
@@ -26,7 +26,7 @@ function save(){
    ADD DAY
 ========================= */
 
-window.addDay = function(){
+function addDay(){
 
   data.push({
     date:"",
@@ -41,7 +41,7 @@ window.addDay = function(){
    ADD ACTIVITY
 ========================= */
 
-window.addActivity = function(d){
+function addActivity(d){
 
   data[d].activities.push({
     name:"",
@@ -56,7 +56,7 @@ window.addActivity = function(d){
    ADD EXPENSE
 ========================= */
 
-window.addExpense = function(d,a){
+function addExpense(d,a){
 
   data[d]
     .activities[a]
@@ -70,7 +70,7 @@ window.addExpense = function(d,a){
 }
 
 /* =========================
-   CALC
+   CALCULATE
 ========================= */
 
 function calc(day){
@@ -130,13 +130,9 @@ function render(){
 
   app.innerHTML = "";
 
-  let grandTotalCAD = 0;
-
   data.forEach((day,di)=>{
 
     const total = calc(day);
-
-    grandTotalCAD += total;
 
     app.innerHTML += `
 
@@ -233,7 +229,7 @@ function render(){
                         data[${di}]
                         .activities[${ai}]
                         .expenses[${ei}]
-                        .value=this.value;
+                        .value=Number(this.value)||0;
 
                         save();
                         render();
@@ -272,11 +268,11 @@ function render(){
 
         </td>
 
-        <td class="totalBox">
+        <td>
           CAD $${total.toFixed(2)}
         </td>
 
-        <td class="totalBox">
+        <td>
           MXN $${(total * RATE).toFixed(2)}
         </td>
 
@@ -285,64 +281,14 @@ function render(){
     `;
   });
 
-  document.getElementById("grandCAD").textContent =
-    grandTotalCAD.toFixed(2);
-
-  document.getElementById("grandMXN").textContent =
-    (grandTotalCAD * RATE).toFixed(2);
+  save();
 }
 
 /* =========================
-   CLEAR
+   START
 ========================= */
 
-window.clearAll = function(){
-
-  if(confirm("¿Borrar todo el itinerario?")){
-
-    data = [];
-
-    save();
-    render();
-  }
-}
-
-/* =========================
-   PDF
-========================= */
-
-window.downloadPDF = function(){
-
-  const element = document.getElementById("pdfArea");
-
-  const opt = {
-
-    margin: 0.4,
-
-    filename: 'itinerario.pdf',
-
-    image: {
-      type: 'jpeg',
-      quality: 1
-    },
-
-    html2canvas: {
-      scale: 2,
-      useCORS: true
-    },
-
-    jsPDF: {
-      unit: 'in',
-      format: 'letter',
-      orientation: 'portrait'
-    }
-  };
-
-  html2pdf()
-    .set(opt)
-    .from(element)
-    .save();
-}
+render();
 
 /* =========================
    PWA
@@ -352,15 +298,5 @@ if ("serviceWorker" in navigator) {
 
   navigator.serviceWorker.register("sw.js");
 }
-
-/* =========================
-   START
-========================= */
-
-render();
-
-window.data = data;
-window.save = save;
-window.render = render;
 
 </script>
